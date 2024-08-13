@@ -16,7 +16,7 @@ importers:
         version: 7.7.2(astro@4.11.6(@types/node@20.14.10)(typescript@5.5.3))
       '@iconify-json/carbon':
         specifier: ^1.1.36
-        version: 1.1.36
+        version: 1.1.37
       '@iconify-json/lucide':
         specifier: ^1.1.199
         version: 1.1.204
@@ -565,8 +565,8 @@ packages:
     resolution: {integrity: sha512-d2CGZR2o7fS6sWB7DG/3a95bGKQyHMACZ5aW8qGkkqQpUoZV6C0X7Pc7l4ZNMZkfNBf4VWNe9E1jRsf0G146Ew==}
     engines: {node: '>=18.18'}
 
-  '@iconify-json/carbon@1.1.36':
-    resolution: {integrity: sha512-NC3VcqLtwLZpi7+LeXj+99/byv+asrnCQxiDNCZV6hKr9WcNh6C25kJguJYfN+dV54kOkw78e+6PitQi2Bppnw==}
+  '@iconify-json/carbon@1.1.37':
+    resolution: {integrity: sha512-Hj9oZtRmN63yt29YovqgqOJQhaoVMNMTkFLT3HKAJm4HjvI405Juez5UfdysYmLjF708U7gJNx4U6K1k5+fTBw==}
 
   '@iconify-json/lucide@1.1.204':
     resolution: {integrity: sha512-yu85ErrSULW+4/glQjfa+RhwNVq/N55nxQJMUSo2d/gojSr6DdyaoI/l/o6YkPrG0UEwvnP6nWDD8YEJSThVrA==}
@@ -4165,7 +4165,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.3.0': {}
 
-  '@iconify-json/carbon@1.1.36':
+  '@iconify-json/carbon@1.1.37':
     dependencies:
       '@iconify/types': 2.0.0
 
