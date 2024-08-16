@@ -5,6 +5,7 @@ export default defineNitroConfig({
       token: "",
       username: "luxass",
     },
+    siteUrl: process.env.DEPLOY_URL ? process.env.URL : "http://localhost:3000",
   },
   errorHandler: "~/error-handler",
 });

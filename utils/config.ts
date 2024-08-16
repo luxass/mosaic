@@ -19,7 +19,7 @@ export interface ResolveConfigOptions {
   name: string;
 }
 
-export async function resolveConfig(
+export async function resolveMosaicConfig(
   owner: string,
   repository: string,
 ): Promise<ConfigResult> {
@@ -67,10 +67,7 @@ export async function resolveConfig(
       || !("content" in result)
       || typeof result.content !== "string"
     ) {
-      return {
-        type: "error",
-        message: "error resolving config due to config not being found",
-      };
+      return { type: "not_found" };
     }
 
     const content = parseToml(base64ToString(result.content));

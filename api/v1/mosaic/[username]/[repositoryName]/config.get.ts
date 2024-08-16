@@ -1,34 +1,43 @@
-export default defineEventHandler(async (event) => {
-  const username = getRouterParam(event, "username");
-  const repositoryName = getRouterParam(event, "repositoryName");
+export default defineLazyEventHandler(async () => {
+  return defineCachedEventHandler(async (event) => {
+    const username = getRouterParam(event, "username");
+    const repositoryName = getRouterParam(event, "repositoryName");
 
-  if (!username || !repositoryName) {
-    return new Response("missing params", {
-      status: 400,
-    });
-  }
+    if (!username || !repositoryName) {
+      throw createError({
+        status: 400,
+        message: "missing params",
+      });
+    }
 
-  const config = await resolveConfig(username, repositoryName);
+    const resolvedMosaicConfig = await resolveMosaicConfig(username, repositoryName);
 
-  if (!config || config.type === "not_found") {
-    return new Response("repository has no config defined", {
-      status: 404,
-    });
-  }
+    if (!resolvedMosaicConfig || resolvedMosaicConfig.type === "not_found") {
+      throw createError({
+        status: 404,
+        message: "repository has no config defined",
+      });
+    }
 
-  if (config.type === "error") {
-    return new Response(
-      "error resolving config due to config not being valid",
-      {
-        status: 500,
-      },
-    );
-  }
+    if (resolvedMosaicConfig.type === "error") {
+      throw createError({
+        status: 400,
+        message: "error resolving config due to config not being valid",
+        data: resolvedMosaicConfig.details,
+      });
+    }
 
-  return {
-    lastModified: new Date().toISOString(),
-    content: config.content,
-    external: config.external,
-    path: config.path,
-  };
+    return {
+      lastModified: new Date().toISOString(),
+      content: resolvedMosaicConfig.content,
+      external: resolvedMosaicConfig.external,
+      path: resolvedMosaicConfig.path,
+    };
+  }, {
+    maxAge: 60 * 60, // 1 hour
+    swr: true,
+    shouldBypassCache() {
+      return import.meta.dev;
+    },
+  });
 });

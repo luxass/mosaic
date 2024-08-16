@@ -4,6 +4,6 @@ export default defineNitroErrorHandler((error, event) => {
   return send(event, JSON.stringify({
     timestamp: new Date().toISOString(),
     message: error.message,
-    status: error.status || 500,
+    status: error.statusCode || 500,
   }));
 });
