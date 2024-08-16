@@ -1,7 +1,7 @@
-import { BADGE_REMOVER } from "~/transformers/badge-remover";
-import { COMMENT_REMOVER } from "~/transformers/remove-comments";
-import { UNUSED_DEFINITION_REMOVER } from "~/transformers/unused-definition-remover";
-import { URL_REWRITER } from "~/transformers/url-rewriter";
+import { BADGE_REMOVER } from "~~/transformers/badge-remover";
+import { COMMENT_REMOVER } from "~~/transformers/remove-comments";
+import { UNUSED_DEFINITION_REMOVER } from "~~/transformers/unused-definition-remover";
+import { URL_REWRITER } from "~~/transformers/url-rewriter";
 
 export default defineEventHandler(async (event) => {
   const owner = getRouterParam(event, "owner");
