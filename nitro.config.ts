@@ -6,4 +6,5 @@ export default defineNitroConfig({
       username: "luxass",
     },
   },
+  errorHandler: "~/error-handler",
 });
