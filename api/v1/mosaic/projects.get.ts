@@ -1,41 +1,23 @@
-import { graphql } from "@octokit/graphql";
-import type { Repository, User } from "github-schema";
+import { Octokit } from "@octokit/rest";
 
 export default defineLazyEventHandler(async () => {
   const runtimeConfig = useRuntimeConfig();
+  const octokit = new Octokit({
+    auth: runtimeConfig.github.token,
+  });
 
-  console.log("fetching projects");
-
-  return defineCachedEventHandler(async (event) => {
-    console.time("total-time");
-
-    // trigger
-
-    console.time("fetch-profile");
-    const { viewer } = await graphql<{
-      viewer: Omit<User, "repositoriesContributedTo"> & {
-        contributions: User["repositoriesContributedTo"];
-      };
-    }>(PROFILE_QUERY, {
-      headers: {
-        "Authorization": `Bearer ${runtimeConfig.github.token}`,
-        "Content-Type": "application/json",
-      },
+  return defineCachedEventHandler(async () => {
+    const { data } = await octokit.request("GET /users/{username}/repos", {
+      username: runtimeConfig.github.username,
+      per_page: 100,
+      page: 1,
     });
-
-    console.timeEnd("fetch-profile");
-
-    if (!viewer.repositories.nodes?.length) {
-      return [];
-    }
 
     const projects: {
       name: string;
       nameWithOwner: string;
-      mosaicUrl: string;
     }[] = [];
 
-    console.time("fetch-ignore");
     const ignoreFile = await fetch(
       "https://raw.githubusercontent.com/luxass/luxass/main/.github/mosaic/.mosaicignore",
     ).then((res) => res.text());
@@ -44,41 +26,46 @@ export default defineLazyEventHandler(async () => {
       .map((line) => line.trim())
       .filter((line) => line && !line.startsWith("#"));
 
-    console.timeEnd("fetch-ignore");
+    const repositories = data.filter((repo) => {
+      return (
+        !!repo
+        && !repo.fork
+        && !repo.private
+        && !repo.archived
+        && !ignore.includes(repo.full_name)
+        && !ignore.includes(repo.name)
+      );
+    });
 
-    const repositories = viewer.repositories.nodes.filter(
-      (repo): repo is NonNullable<Repository> => {
-        return (
-          !!repo
-          && !repo.isFork
-          && !repo.isPrivate
-          && !repo.isArchived
-          && !ignore.includes(repo.nameWithOwner)
-          && !ignore.includes(repo.nameWithOwner.split("/")[1])
-        );
-      },
-    );
+    for await (const file of getExternalRepositories()) {
+      if (file.endsWith("README.md") || file.endsWith(".mosaicignore")) continue;
 
-    // for await (const file of getExternalRepositories()) {
-    //   if (file.endsWith("README.md") || file.endsWith(".mosaicignore")) continue;
+      const [owner, name] = file.replace(".github/mosaic/", "").split("/");
 
-    //   const [owner, name] = file.replace(".github/mosaic/", "").split("/");
+      // const { repository } = await graphql<{
+      //   repository: Repository;
+      // }>(REPOSITORY_QUERY, {
+      //   owner,
+      //   name: name.replace(".toml", ""),
+      //   headers: {
+      //     "Authorization": `Bearer ${runtimeConfig.github.token}`,
+      //     "Content-Type": "application/json",
+      //   },
+      // });
 
-    //   const { repository } = await graphql<{
-    //     repository: Repository;
-    //   }>(REPOSITORY_QUERY, {
-    //     owner,
-    //     name: name.replace(".toml", ""),
-    //     headers: {
-    //       "Authorization": `Bearer ${runtimeConfig.github.token}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //   });
+      projects.push({
+        name: name.replace(".toml", ""),
+        nameWithOwner: `${owner}/${name.replace(".toml", "")}`,
+      });
+    }
 
-    //   repositories.push(repository);
-    // }
+    for (const repo of repositories) {
+      projects.push({
+        name: repo.name,
+        nameWithOwner: repo.full_name,
+      });
+    }
 
-    console.timeEnd("total-time");
     return projects;
   }, {
     maxAge: 60 * 60, // 1 hour
