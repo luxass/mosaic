@@ -9,6 +9,8 @@ export default defineLazyEventHandler(async () => {
   return defineCachedEventHandler(async (event) => {
     console.time("total-time");
 
+    // trigger
+
     console.time("fetch-profile");
     const { viewer } = await graphql<{
       viewer: Omit<User, "repositoriesContributedTo"> & {
