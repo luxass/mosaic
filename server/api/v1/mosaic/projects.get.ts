@@ -7,7 +7,6 @@ export default defineLazyEventHandler(async () => {
   console.log("fetching projects");
 
   return defineCachedEventHandler(async (event) => {
-    console.log("fetching projects 2");
     console.time("total-time");
 
     console.time("fetch-profile");
