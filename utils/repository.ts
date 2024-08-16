@@ -148,9 +148,9 @@ export async function* getExternalRepositories(
 export async function getRepositoryLanguages(
   owner: string,
   repositoryName: string,
-): Promise<Record<string, number>> {
+): Promise<Record<string, number> | undefined> {
   if (!owner || !repositoryName) {
-    return {};
+    return undefined;
   }
 
   const runtimeConfig = useRuntimeConfig();
@@ -166,9 +166,13 @@ export async function getRepositoryLanguages(
       },
     ).then((res) => res.json());
 
+    if (!data || typeof data !== "object" || "message" in data) {
+      return undefined;
+    }
+
     return data;
   } catch (err) {
     console.error("Error fetching languages from github:", err);
-    return {};
+    return undefined;
   }
 }
