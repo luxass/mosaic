@@ -1,14 +1,14 @@
 export default defineEventHandler(async (event) => {
-  const owner = getRouterParam(event, "owner");
+  const username = getRouterParam(event, "username");
   const repositoryName = getRouterParam(event, "repositoryName");
 
-  if (!owner || !repositoryName) {
+  if (!username || !repositoryName) {
     return new Response("missing params", {
       status: 400,
     });
   }
 
-  const config = await resolveConfig(owner, repositoryName);
+  const config = await resolveConfig(username, repositoryName);
 
   if (!config || config.type === "not_found") {
     return new Response("repository has no config defined", {

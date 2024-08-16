@@ -4,10 +4,10 @@ import { UNUSED_DEFINITION_REMOVER } from "~~/transformers/unused-definition-rem
 import { URL_REWRITER } from "~~/transformers/url-rewriter";
 
 export default defineEventHandler(async (event) => {
-  const owner = getRouterParam(event, "owner");
+  const username = getRouterParam(event, "username");
   const repositoryName = getRouterParam(event, "repositoryName");
 
-  if (!owner || !repositoryName) {
+  if (!username || !repositoryName) {
     return new Response("missing params", {
       status: 400,
     });
@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
 
   const path = getRouterParam(event, "path");
   const readme = await getREADME({
-    owner,
+    owner: username,
     repository: repositoryName,
     readmePath: path,
   });
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
 
     const file = await remark()
       .use(URL_REWRITER, {
-        repoUrl: `https://github.com/${owner}/${repositoryName}`,
+        repoUrl: `https://github.com/${username}/${repositoryName}`,
       })
       .use(BADGE_REMOVER)
       .use(UNUSED_DEFINITION_REMOVER)

@@ -81,3 +81,28 @@ export const REPOSITORY_QUERY = gql`
     }
   }
 `;
+
+export const PROFILE_CONTRIBUTIONS_QUERY = gql`
+  #graphql
+  query getProfileContributions($login: String!) {
+    user(login: $login) {
+     contributions: repositoriesContributedTo(
+        privacy: PUBLIC
+        first: 100
+        contributionTypes: [
+          COMMIT
+          ISSUE
+          PULL_REQUEST
+          REPOSITORY
+          PULL_REQUEST_REVIEW
+        ]
+      ) {
+        nodes {
+          name
+          nameWithOwner
+          description
+        }
+      }
+    }
+  }
+`;

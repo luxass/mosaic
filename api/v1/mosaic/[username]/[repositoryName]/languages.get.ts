@@ -2,17 +2,17 @@ export default defineLazyEventHandler(async () => {
   const ALL_LANGUAGES = await import("@luxass/github-languages/json").then((m) => m.default);
 
   return defineCachedEventHandler(async (event) => {
-    const owner = getRouterParam(event, "owner");
+    const username = getRouterParam(event, "username");
     const repositoryName = getRouterParam(event, "repositoryName");
 
-    if (!owner || !repositoryName) {
+    if (!username || !repositoryName) {
       throw createError({
         status: 400,
         message: "missing params",
       });
     }
 
-    const languages = await getRepositoryLanguages(owner, repositoryName);
+    const languages = await getRepositoryLanguages(username, repositoryName);
 
     if (!languages) {
       throw createError({

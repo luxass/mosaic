@@ -1,8 +1,8 @@
 export default defineEventHandler(async (event) => {
-  const owner = getRouterParam(event, "owner");
+  const username = getRouterParam(event, "username");
   const repositoryName = getRouterParam(event, "repositoryName");
 
-  if (!owner || !repositoryName) {
+  if (!username || !repositoryName) {
     return new Response("missing params", {
       status: 400,
     });
