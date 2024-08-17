@@ -6,12 +6,6 @@ export default defineLazyEventHandler(async () => {
   return defineEventHandler(async (event) => {
     const repositoriesRaw = getRequestHeader(event, "x-mosaic-repositories");
 
-    // set cache to 1 hour
-    setResponseHeaders(event, {
-      "Cache-Control": "public, max-age=3600",
-      "Content-Type": "application/json",
-    });
-
     if (!repositoriesRaw?.trim()) {
       throw createError({
         status: 400,
