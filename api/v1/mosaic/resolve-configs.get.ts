@@ -3,8 +3,14 @@ import { z } from "zod";
 const GITHUB_REPOSITORIES = z.array(z.string()).max(10);
 
 export default defineLazyEventHandler(async () => {
-  return defineCachedEventHandler(async (event) => {
+  return defineEventHandler(async (event) => {
     const repositoriesRaw = getRequestHeader(event, "x-mosaic-repositories");
+
+    // set cache to 1 hour
+    setResponseHeaders(event, {
+      "Cache-Control": "public, max-age=3600",
+      "Content-Type": "application/json",
+    });
 
     if (!repositoriesRaw?.trim()) {
       throw createError({
@@ -65,12 +71,5 @@ export default defineLazyEventHandler(async () => {
         external: resolvedMosaicConfig.external,
       };
     });
-  }, {
-    maxAge: 60 * 60, // 1 hour
-    swr: true,
-    varies: ["x-mosaic-repositories"],
-    // shouldBypassCache() {
-    //   return true || import.meta.dev;
-    // },
   });
 });
