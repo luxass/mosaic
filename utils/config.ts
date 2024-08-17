@@ -67,6 +67,8 @@ export async function resolveMosaicConfig(
       || !("content" in result)
       || typeof result.content !== "string"
     ) {
+      // eslint-disable-next-line no-console
+      console.info("repository has no config defined or invalid response from github", result);
       return { type: "not_found" };
     }
 
