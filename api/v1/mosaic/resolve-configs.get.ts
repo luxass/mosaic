@@ -70,7 +70,7 @@ export default defineLazyEventHandler(async () => {
     swr: true,
     varies: ["x-mosaic-repositories"],
     shouldBypassCache() {
-      return import.meta.dev;
+      return true || import.meta.dev;
     },
   });
 });
