@@ -10,24 +10,13 @@ const REPOSITORY_FRAGMENT = gql`
     description
     pushedAt
     url
-    # defaultBranchRef {
-    #   name
-    # }
-    # languages(first: 1, orderBy: { field: SIZE, direction: DESC }) {
-    #   nodes {
-    #     name
-    #     color
-    #   }
-    # }
-    # object(expression: "HEAD:.github") {
-    #   ... on Tree {
-    #     entries {
-    #       name
-    #       type
-    #       path
-    #     }
-    #   }
-    # }
+    defaultBranchRef {
+      name
+    }
+    primaryLanguage {
+      name
+      color
+    }
   }
 `;
 
@@ -50,21 +39,6 @@ export const PROFILE_QUERY = gql`
         pageInfo {
           endCursor
           hasNextPage
-        }
-      }
-      contributions: repositoriesContributedTo(
-        privacy: PUBLIC
-        first: 100
-        contributionTypes: [
-          COMMIT
-          ISSUE
-          PULL_REQUEST
-          REPOSITORY
-          PULL_REQUEST_REVIEW
-        ]
-      ) {
-        nodes {
-          nameWithOwner
         }
       }
     }

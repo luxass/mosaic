@@ -60,7 +60,7 @@ export default defineLazyEventHandler(async () => {
         ignore: config.project.ignore || false,
         priority: config.project.priority || 0,
         readme: config.readme
-          ? `${runtimeConfig.siteUrl}/api/v1/resolve/${username}/${repositoryName}/readme${typeof config.readme === "string" ? `/${config.readme}` : ""
+          ? `${runtimeConfig.siteUrl}/api/v1/mosaic/${username}/${repositoryName}/readme${typeof config.readme === "string" ? `/${config.readme}` : ""
           }`
           : undefined,
         deprecated: config.deprecated,

@@ -33,6 +33,10 @@ export const PROJECT_SCHEMA = z.object({
     })
     .optional()
     .default(false),
+
+  handle: z.string({
+    description: "the handle of the project. By default the handle will be auto-inferred from the repository name.",
+  }).optional(),
 });
 
 export const NPM_SCHEMA = z.object({

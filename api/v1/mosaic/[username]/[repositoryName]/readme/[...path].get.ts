@@ -9,8 +9,9 @@ export default defineLazyEventHandler(async () => {
     const repositoryName = getRouterParam(event, "repositoryName");
 
     if (!username || !repositoryName) {
-      return new Response("missing params", {
+      throw createError({
         status: 400,
+        message: "missing username or repository name",
       });
     }
 
@@ -22,18 +23,18 @@ export default defineLazyEventHandler(async () => {
     });
 
     if (!readme || readme.type === "not_found") {
-      return new Response("repository has no readme defined", {
+      throw createError({
         status: 404,
+        message: "repository has no readme defined",
       });
     }
 
     if (readme.type === "error") {
-      return new Response(
-        "error resolving readme due to readme not being valid",
-        {
-          status: 500,
-        },
-      );
+      throw createError({
+        status: 500,
+        message: "error resolving readme",
+        data: readme.details,
+      });
     }
 
     const queryParams = getQuery(event);

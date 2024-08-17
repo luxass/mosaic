@@ -7,16 +7,62 @@ export default defineLazyEventHandler(async () => {
   });
 
   return defineCachedEventHandler(async () => {
-    const { data } = await octokit.request("GET /users/{username}/repos", {
-      username: runtimeConfig.github.username,
-      per_page: 100,
-      page: 1,
-    });
+    const allRepositories = await Promise.all([
+      octokit.request("GET /users/{username}/repos", {
+        username: runtimeConfig.github.username,
+        per_page: 10,
+        page: 1,
+      }),
+      octokit.request("GET /users/{username}/repos", {
+        username: runtimeConfig.github.username,
+        per_page: 10,
+        page: 2,
+      }),
+      octokit.request("GET /users/{username}/repos", {
+        username: runtimeConfig.github.username,
+        per_page: 10,
+        page: 3,
+      }),
+      octokit.request("GET /users/{username}/repos", {
+        username: runtimeConfig.github.username,
+        per_page: 10,
+        page: 4,
+      }),
+      octokit.request("GET /users/{username}/repos", {
+        username: runtimeConfig.github.username,
+        per_page: 10,
+        page: 5,
+      }),
+      octokit.request("GET /users/{username}/repos", {
+        username: runtimeConfig.github.username,
+        per_page: 10,
+        page: 6,
+      }),
+      octokit.request("GET /users/{username}/repos", {
+        username: runtimeConfig.github.username,
+        per_page: 10,
+        page: 7,
+      }),
+      octokit.request("GET /users/{username}/repos", {
+        username: runtimeConfig.github.username,
+        per_page: 10,
+        page: 8,
+      }),
+      octokit.request("GET /users/{username}/repos", {
+        username: runtimeConfig.github.username,
+        per_page: 10,
+        page: 9,
+      }),
+      octokit.request("GET /users/{username}/repos", {
+        username: runtimeConfig.github.username,
+        per_page: 10,
+        page: 10,
+      }),
+    ]);
 
-    const projects: {
-      name: string;
-      nameWithOwner: string;
-    }[] = [];
+    const data = allRepositories.flatMap((res) => res.data);
+
+    const projects: string[] = [];
 
     const ignoreFile = await fetch(
       "https://raw.githubusercontent.com/luxass/luxass/main/.github/mosaic/.mosaicignore",
@@ -40,30 +86,11 @@ export default defineLazyEventHandler(async () => {
     for await (const file of getExternalRepositories()) {
       if (file.endsWith("README.md") || file.endsWith(".mosaicignore")) continue;
 
-      const [owner, name] = file.replace(".github/mosaic/", "").split("/");
-
-      // const { repository } = await graphql<{
-      //   repository: Repository;
-      // }>(REPOSITORY_QUERY, {
-      //   owner,
-      //   name: name.replace(".toml", ""),
-      //   headers: {
-      //     "Authorization": `Bearer ${runtimeConfig.github.token}`,
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-
-      projects.push({
-        name: name.replace(".toml", ""),
-        nameWithOwner: `${owner}/${name.replace(".toml", "")}`,
-      });
+      projects.push(file.replace(".github/mosaic/", "").replace(".toml", ""));
     }
 
     for (const repo of repositories) {
-      projects.push({
-        name: repo.name,
-        nameWithOwner: repo.full_name,
-      });
+      projects.push(repo.full_name);
     }
 
     return projects;
