@@ -1,9 +1,10 @@
 # build output
 dist/
-.vercel
+.output
+.netlify
 
 # generated types
-.astro/
+.nitro
 
 # dependencies
 node_modules/
