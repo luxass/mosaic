@@ -66,7 +66,7 @@ export default defineLazyEventHandler(async () => {
       };
     });
   }, {
-    maxAge: 60 * 60, // 1 hour
+    maxAge: 120, // 2 min
     swr: true,
     varies: ["x-mosaic-repositories"],
     shouldBypassCache() {
