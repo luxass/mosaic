@@ -1,7 +1,6 @@
 import { graphql } from "@octokit/graphql";
 import type { RepositoryNode } from "github-schema";
 import { gql } from "github-schema";
-import { Language } from "@luxass/github-languages";
 
 export type RepositoryType = "fork" | "private" | "archived" | "public";
 

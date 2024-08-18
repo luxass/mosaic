@@ -20,19 +20,19 @@ export const UNUSED_DEFINITION_REMOVER: Plugin<void[], Root> = function () {
       ],
       (node) => {
         assert(
-          node.type === "imageReference" ||
-            node.type === "linkReference" ||
-            node.type === "footnoteReference" ||
-            node.type === "definition" ||
-            node.type === "footnoteDefinition",
+          node.type === "imageReference"
+          || node.type === "linkReference"
+          || node.type === "footnoteReference"
+          || node.type === "definition"
+          || node.type === "footnoteDefinition",
           `unexpected node type ${node.type}`,
         );
 
         if (!isGenerated(node)) {
           if (
-            node.type === "imageReference" ||
-            node.type === "linkReference" ||
-            node.type === "footnoteReference"
+            node.type === "imageReference"
+            || node.type === "linkReference"
+            || node.type === "footnoteReference"
           ) {
             const id = node.identifier.toUpperCase();
             const info = map.get(id);

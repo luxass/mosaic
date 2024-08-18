@@ -20,8 +20,8 @@ export default defineLazyEventHandler(() => {
           const payload: any = event.payload || {};
           return (payload.commits || []).map((commit: any) => {
             const title = (commit?.message || "").split("\n")[0];
-            const version =
-              title.match(/v?(\d+\.\d+\.\d+(?:-[\w.]+)?)(?:\s|$)/)?.[1] || "";
+            const version
+              = title.match(/v?(\d+\.\d+\.\d+(?:-[\w.]+)?)(?:\s|$)/)?.[1] || "";
             return {
               id: event.id,
               type: event.type!,
