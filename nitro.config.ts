@@ -6,6 +6,8 @@ export default defineNitroConfig({
       token: "",
       username: "luxass",
     },
+    worker: "http://localhost:8787",
+    // eslint-disable-next-line node/prefer-global/process
     siteUrl: process.env.DEPLOY_URL ? process.env.URL : "http://localhost:3000",
   },
   errorHandler: "~/error-handler",
