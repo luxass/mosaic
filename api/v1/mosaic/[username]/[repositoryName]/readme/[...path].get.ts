@@ -73,5 +73,6 @@ export default defineLazyEventHandler(async () => {
     shouldBypassCache() {
       return import.meta.dev;
     },
+    varies: ["x-transform"],
   });
 });
