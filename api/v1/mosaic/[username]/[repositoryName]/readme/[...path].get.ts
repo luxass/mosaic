@@ -1,9 +1,11 @@
+import { ICON } from "~/transformers/icon";
 import { BADGE_REMOVER } from "~~/transformers/badge-remover";
 import { COMMENT_REMOVER } from "~~/transformers/remove-comments";
 import { UNUSED_DEFINITION_REMOVER } from "~~/transformers/unused-definition-remover";
 import { URL_REWRITER } from "~~/transformers/url-rewriter";
 
 export default defineLazyEventHandler(async () => {
+  const remark = await import("remark").then((m) => m.remark);
   return defineCachedEventHandler(async (event) => {
     const username = getRouterParam(event, "username");
     const repositoryName = getRouterParam(event, "repositoryName");
@@ -42,7 +44,16 @@ export default defineLazyEventHandler(async () => {
     const shouldTransform = getRequestHeader(event, "x-transform") === "true";
 
     if (shouldTransform || queryParams.transform === "" || queryParams.transform === "true") {
-      const remark = await import("remark").then((m) => m.remark);
+      const projectName = getRequestHeader(event, "x-transform-name");
+
+      if (!projectName?.trim()) {
+        throw createError({
+          status: 400,
+          message: "missing project name",
+        });
+      }
+
+      const ICONS: Map<string, string> = new Map();
 
       const file = await remark()
         .use(URL_REWRITER, {
@@ -51,6 +62,10 @@ export default defineLazyEventHandler(async () => {
         .use(BADGE_REMOVER)
         .use(UNUSED_DEFINITION_REMOVER)
         .use(COMMENT_REMOVER)
+        .use(ICON, {
+          icons: ICONS,
+          name: projectName,
+        })
         .process(readme.content || "No README was found.");
 
       const transformedContent = file.toString();
@@ -73,6 +88,9 @@ export default defineLazyEventHandler(async () => {
     shouldBypassCache() {
       return import.meta.dev;
     },
-    varies: ["x-transform"],
+    varies: [
+      "x-transform",
+      "x-transform-name",
+    ],
   });
 });
