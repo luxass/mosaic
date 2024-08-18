@@ -36,6 +36,14 @@ export default defineLazyEventHandler(async () => {
 
     const configs = await Promise.all(repositories.map(async (repository) => {
       const [username, repositoryName] = repository.split("/");
+
+      if (!username || !repositoryName) {
+        return {
+          repository,
+          type: "not_found",
+        };
+      }
+
       return {
         repository,
         resolvedMosaicConfig: await resolveMosaicConfig(username, repositoryName),

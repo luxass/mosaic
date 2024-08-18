@@ -86,7 +86,7 @@ export default defineLazyEventHandler(async () => {
     maxAge: 60 * 60, // 1 hour
     swr: true,
     shouldBypassCache() {
-      return import.meta.dev;
+      return import.meta.dev || false;
     },
     varies: [
       "x-transform",

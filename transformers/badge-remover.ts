@@ -44,7 +44,7 @@ export const BADGE_REMOVER: Plugin<void[], Root> = () => {
         while (++offset < children.length) {
           const child = children[offset];
 
-          if (badgeImage(child, define)) {
+          if (badgeImage(child as any, define)) {
             remove = true;
             break;
           }

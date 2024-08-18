@@ -1,4 +1,4 @@
-function html(strings, ...values) {
+function html(strings: TemplateStringsArray, ...values: any[]) {
   return String.raw(strings, ...values);
 }
 

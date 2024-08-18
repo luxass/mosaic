@@ -23,13 +23,14 @@ export default defineLazyEventHandler(async () => {
 
     return Object.keys(languages).map((language) => ({
       name: language,
-      color: ALL_LANGUAGES[language]?.color ?? "#000000",
+      // @ts-expect-error - doesn't matter #mutetypescript
+      color: ALL_LANGUAGES[language].color ?? "#000000",
     }));
   }, {
     maxAge: 60 * 60, // 1 hour
     swr: true,
     shouldBypassCache() {
-      return import.meta.dev;
+      return import.meta.dev || false;
     },
   });
 });

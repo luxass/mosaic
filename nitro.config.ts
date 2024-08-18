@@ -10,5 +10,13 @@ export default defineNitroConfig({
     // eslint-disable-next-line node/prefer-global/process
     siteUrl: process.env.DEPLOY_URL ? process.env.URL : "http://localhost:3000",
   },
+  typescript: {
+    strict: true,
+    tsConfig: {
+      compilerOptions: {
+        skipLibCheck: true,
+      },
+    },
+  },
   errorHandler: "~/error-handler",
 });
