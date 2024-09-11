@@ -2,8 +2,9 @@ function html(strings: TemplateStringsArray, ...values: any[]) {
   return String.raw(strings, ...values);
 }
 
-export default defineRenderHandler(() => {
-  const body = html/* html */`<!doctype html>
+export default defineEventHandler((event) => {
+  setResponseHeader(event, "Content-Type", "text/html");
+  return html/* html */`<!doctype html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
@@ -61,63 +62,63 @@ export default defineRenderHandler(() => {
           theme: {
             extend: {
               colors: {
-                border: 'hsl(var(--border))',
-                input: 'hsl(var(--input))',
-                ring: 'hsl(var(--ring))',
-                background: 'hsl(var(--background))',
-                foreground: 'hsl(var(--foreground))',
+                border: "hsl(var(--border))",
+                input: "hsl(var(--input))",
+                ring: "hsl(var(--ring))",
+                background: "hsl(var(--background))",
+                foreground: "hsl(var(--foreground))",
                 primary: {
-                  DEFAULT: 'hsl(var(--primary))',
-                  foreground: 'hsl(var(--primary-foreground))'
+                  DEFAULT: "hsl(var(--primary))",
+                  foreground: "hsl(var(--primary-foreground))",
                 },
                 secondary: {
-                  DEFAULT: 'hsl(var(--secondary))',
-                  foreground: 'hsl(var(--secondary-foreground))'
+                  DEFAULT: "hsl(var(--secondary))",
+                  foreground: "hsl(var(--secondary-foreground))",
                 },
                 destructive: {
-                  DEFAULT: 'hsl(var(--destructive))',
-                  foreground: 'hsl(var(--destructive-foreground))'
+                  DEFAULT: "hsl(var(--destructive))",
+                  foreground: "hsl(var(--destructive-foreground))",
                 },
                 muted: {
-                  DEFAULT: 'hsl(var(--muted))',
-                  foreground: 'hsl(var(--muted-foreground))'
+                  DEFAULT: "hsl(var(--muted))",
+                  foreground: "hsl(var(--muted-foreground))",
                 },
                 accent: {
-                  DEFAULT: 'hsl(var(--accent))',
-                  foreground: 'hsl(var(--accent-foreground))'
+                  DEFAULT: "hsl(var(--accent))",
+                  foreground: "hsl(var(--accent-foreground))",
                 },
                 popover: {
-                  DEFAULT: 'hsl(var(--popover))',
-                  foreground: 'hsl(var(--popover-foreground))'
+                  DEFAULT: "hsl(var(--popover))",
+                  foreground: "hsl(var(--popover-foreground))",
                 },
                 card: {
-                  DEFAULT: 'hsl(var(--card))',
-                  foreground: 'hsl(var(--card-foreground))'
+                  DEFAULT: "hsl(var(--card))",
+                  foreground: "hsl(var(--card-foreground))",
                 },
               },
               borderRadius: {
-                xl: 'calc(var(--radius) + 4px)',
-                lg: 'var(--radius)',
-                md: 'calc(var(--radius) - 2px)',
-                sm: 'calc(var(--radius) - 4px)'
+                xl: "calc(var(--radius) + 4px)",
+                lg: "var(--radius)",
+                md: "calc(var(--radius) - 2px)",
+                sm: "calc(var(--radius) - 4px)",
               },
               keyframes: {
                 "accordion-down": {
                   from: { height: 0 },
-                  to: { height: "var(--radix-accordion-content-height)" }
+                  to: { height: "var(--radix-accordion-content-height)" },
                 },
                 "accordion-up": {
                   from: { height: "var(--radix-accordion-content-height)" },
-                  to: { height: 0 }
-                }
+                  to: { height: 0 },
+                },
               },
               animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
-                "accordion-up": "accordion-up 0.2s ease-out"
+                "accordion-up": "accordion-up 0.2s ease-out",
               },
             },
           },
-        }
+        };
       </script>
     </head>
     <body class="bg-gray-100">
@@ -126,10 +127,15 @@ export default defineRenderHandler(() => {
       >
         <section class="container px-4 py-12 md:py-24 lg:py-32 text-center">
           <div class="max-w-3xl mx-auto space-y-6">
-            <h1 class="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+            <h1
+              class="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl"
+            >
               MOSAIC
             </h1>
-            <p class="text-muted-foreground md:text-xl">An Api that can help customize projcts that are shown on my website</p>
+            <p class="text-muted-foreground md:text-xl">
+              An Api that can help customize projcts that are shown on my
+              website
+            </p>
             <a
               href="https://github.com/luxass/mosaic"
               class="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
@@ -141,8 +147,4 @@ export default defineRenderHandler(() => {
       </div>
     </body>
   </html>`;
-
-  return {
-    body,
-  };
 });

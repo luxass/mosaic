@@ -1,6 +1,5 @@
 // https://nitro.unjs.io/config
 export default defineNitroConfig({
-  renderer: "./renderer",
   runtimeConfig: {
     github: {
       token: "",
