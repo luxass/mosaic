@@ -133,8 +133,7 @@ export default defineEventHandler((event) => {
               MOSAIC
             </h1>
             <p class="text-muted-foreground md:text-xl">
-              An Api that can help customize projcts that are shown on my
-              website
+              An Api serving the list of projects and their details.
             </p>
             <a
               href="https://github.com/luxass/mosaic"
