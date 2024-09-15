@@ -105,12 +105,33 @@ export const DEPRECATED_SCHEMA = z.object({
     .optional(),
 });
 
+export const PLAYGROUNDS_SCHEMA = z.object({
+  enabled: z.boolean({
+    description: "include links to playgrounds.",
+  }),
+
+  links: z.array(
+    z.object({
+      name: z.string({
+        description: "the name of the playground.",
+      }),
+      url: z.string({
+        description: "the url of the playground. if the `path` is not provided, the `url` will be used.",
+      }).url().optional(),
+      path: z.string({
+        description: "the path to the playground. if the `url` is not provided, the `path` will be used.",
+      }).optional(),
+    }),
+  ),
+});
+
 const BASE_MOSAIC_SCHEMA = z.object({
   project: PROJECT_SCHEMA,
   npm: NPM_SCHEMA.optional(),
   readme: README_SCHEMA.optional(),
   website: WEBSITE_SCHEMA.optional(),
   deprecated: DEPRECATED_SCHEMA.optional(),
+  playgrounds: PLAYGROUNDS_SCHEMA.optional(),
 });
 
 export const WORKSPACE_SCHEMA = z.object({
