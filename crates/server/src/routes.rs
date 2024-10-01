@@ -1,5 +1,5 @@
-use axum::{response::IntoResponse, routing::get, Json, Router};
-use mosaic_utils::{get_json_schema, AppState, MosaicConfig};
+use axum::{routing::get, Json, Router};
+use mosaic_utils::{get_json_schema, AppState};
 use utoipa::OpenApi;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_scalar::{Scalar, Servable};
@@ -15,10 +15,8 @@ pub fn routes() -> Router<AppState> {
 
   let openapi_json = api.clone();
 
-  let api_router = api_router
+  api_router
     .route("/openapi.json", get(|| async move { Json(openapi_json) }))
     .route("/json-schema", get(get_json_schema))
-    .merge(Scalar::with_url("/scalar", api));
-
-  api_router
+    .merge(Scalar::with_url("/scalar", api))
 }
