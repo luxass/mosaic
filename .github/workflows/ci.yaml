@@ -17,9 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.7
-      - run: rustc --version
-      - run: cargo --version
-      - run: cargo build --verbose --all-targets
+      - run: cargo build --release
       - run: cargo test
 
   clippy:
