@@ -1,7 +1,7 @@
 use mosaic_utils::AppError;
 use tracing::level_filters::LevelFilter;
 use tracing_subscriber::{
-  fmt::Layer,
+  fmt,
   layer::{Layered, SubscriberExt},
   util::SubscriberInitExt,
   EnvFilter, Registry,
@@ -33,11 +33,24 @@ fn filter_layer() -> EnvFilter {
     .from_env_lossy()
 }
 
-fn fmt_layer() -> Layer<Layered<EnvFilter, Registry>> {
-  let fmt_layer = tracing_subscriber::fmt::layer();
+#[cfg(feature = "json")]
+type FmtLayer = fmt::Layer<
+  Layered<EnvFilter, Registry>,
+  fmt::format::JsonFields,
+  fmt::format::Format<fmt::format::Json>,
+>;
 
+#[cfg(not(feature = "json"))]
+type FmtLayer = fmt::Layer<Layered<EnvFilter, Registry>>;
+
+fn fmt_layer() -> FmtLayer {
   #[cfg(feature = "json")]
-  let fmt_layer = fmt_layer.json();
+  {
+    fmt::layer().json()
+  }
 
-  fmt_layer
+  #[cfg(not(feature = "json"))]
+  {
+    fmt::layer()
+  }
 }
