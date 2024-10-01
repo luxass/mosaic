@@ -39,10 +39,10 @@ pub async fn handler(
 
       for (language, _) in _languages {
         let found = LANGUAGES.get_by_name(&language);
-        if found.is_none() {
-          languages.insert(language, "".to_owned());
+        if let Some(found) = found {
+          languages.insert(language, found.color.to_owned());
         } else {
-          languages.insert(language, found.unwrap().color.to_owned());
+          languages.insert(language, "".to_owned());
         }
       }
 
