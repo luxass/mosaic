@@ -12,7 +12,7 @@ pub use github::GitHubClient;
 pub use graceful_shutdown::shutdown_signal;
 pub use json_schema::get_json_schema;
 pub use mosaic_config::{
-  resolve_config, MosaicConfig, MosaicPackageConfig, MosaicProjectConfig, MosaicReadmeConfig,
-  MosaicWebsiteConfig, PackageType, ResolvedConfig, MosaicWorkspaceConfig, BaseMosaicConfig
+  resolve_config, BaseMosaicConfig, MosaicConfig, MosaicPackageConfig, MosaicProjectConfig,
+  MosaicReadmeConfig, MosaicWebsiteConfig, MosaicWorkspaceConfig, PackageType, ResolvedConfig,
 };
 pub use version::VERSION;

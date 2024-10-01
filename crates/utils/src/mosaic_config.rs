@@ -18,6 +18,19 @@ pub struct BaseMosaicConfig {
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ToSchema)]
+#[schema(example = json!({
+  "project": {
+      "description": "The website you're currently viewing.",
+      "ignore": false,
+      "name": "luxass.dev",
+      "priority": 10,
+      "stars": false,
+      "version": false
+  },
+  "website": {
+      "enabled": true
+  }
+}))]
 pub struct MosaicConfig {
   #[serde(flatten)]
   pub base_config: BaseMosaicConfig,

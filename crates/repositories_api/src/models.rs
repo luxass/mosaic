@@ -1,7 +1,10 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use utoipa::ToSchema;
-use mosaic_utils::MosaicConfig;
+use utoipa::{
+  openapi::{
+    schema::RefBuilder, Ref,
+  }, ToSchema,
+};
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct MosaicRepository {
@@ -9,7 +12,7 @@ pub struct MosaicRepository {
   /// The id of the repository
   pub id: sqlx::types::Uuid,
 
-  #[schema(example = "692848155")]
+  #[schema(example = 692848155)]
   /// The id of the repository on github
   pub github_id: i64,
 
@@ -33,19 +36,13 @@ pub struct MosaicRepository {
   /// The owner of the repository
   pub last_updated: Option<DateTime<Utc>>,
 
-  #[schema(value_type = MosaicConfig, example = json!({
-    "project": {
-      "description": "The website you're currently viewing.",
-      "ignore": false,
-      "name": "luxass.dev",
-      "priority": 10,
-      "stars": false,
-      "version": false
-    },
-    "website": {
-      "enabled": true
-    }
-  }))]
-  /// The owner of the repository
+  #[schema(inline = false, schema_with = mosaic_config_ref, required)]
+  /// The config corresponding to the repository
   pub config: Option<sqlx::types::JsonValue>,
+}
+
+fn mosaic_config_ref() -> Ref {
+  RefBuilder::new()
+    .ref_location_from_schema_name("MosaicConfig")
+    .build()
 }

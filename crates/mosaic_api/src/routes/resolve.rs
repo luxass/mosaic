@@ -3,7 +3,7 @@ use axum::{
   extract::{Path, State},
   Json,
 };
-use mosaic_utils::{resolve_config, ApiErrorResponse, AppEnv, AppError, AppState, ResolvedConfig};
+use mosaic_utils::{ApiErrorResponse, AppError, AppState};
 
 use crate::{models::ResolvedProject, TAG};
 
@@ -33,7 +33,7 @@ pub async fn handler(
       ApiErrorResponse::from(err)
     })?;
 
-  let repository = state
+  let _repository = state
     .github
     .get_repository(&username, &repository_name)
     .await
@@ -53,7 +53,6 @@ pub async fn handler(
   if let Some(_workspace_config) = &mosaic_config.workspace {
     return Err(ApiErrorResponse::from(AppError::Unknown));
   }
-
 
   let project = ResolvedProject {
     name: if let Some(name) = &mosaic_config.base_config.project.name {

@@ -26,9 +26,13 @@ pub async fn handler(
   Path(mosaic_repository_id): Path<Uuid>,
   State(state): State<AppState>,
 ) -> Result<Json<MosaicRepository>, ApiErrorResponse> {
-  match sqlx::query_as!(MosaicRepository, "SELECT * FROM mosaic_repositories WHERE id = $1", mosaic_repository_id)
-    .fetch_one(&state.db)
-    .await
+  match sqlx::query_as!(
+    MosaicRepository,
+    "SELECT * FROM mosaic_repositories WHERE id = $1",
+    mosaic_repository_id
+  )
+  .fetch_one(&state.db)
+  .await
   {
     Ok(repository) => Ok(Json(repository)),
     Err(err) => {

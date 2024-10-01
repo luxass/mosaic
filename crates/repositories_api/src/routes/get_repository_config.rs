@@ -26,9 +26,12 @@ pub async fn handler(
   Path(mosaic_repository_id): Path<Uuid>,
   State(state): State<AppState>,
 ) -> Result<Json<MosaicConfig>, ApiErrorResponse> {
-  match sqlx::query_scalar!("SELECT config FROM mosaic_repositories WHERE id = $1", mosaic_repository_id)
-    .fetch_one(&state.db)
-    .await
+  match sqlx::query_scalar!(
+    "SELECT config FROM mosaic_repositories WHERE id = $1",
+    mosaic_repository_id
+  )
+  .fetch_one(&state.db)
+  .await
   {
     Ok(raw_config) => {
       let config: MosaicConfig = serde_json::from_value(raw_config).map_err(|err| {
