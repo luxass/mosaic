@@ -115,7 +115,6 @@ impl GitHubClient {
         }));
       }
 
-
       Ok(profile.data.unwrap().viewer)
     } else {
       Err(AppError::GitHubError(GitHubErrorBody {
