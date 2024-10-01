@@ -1,27 +1,31 @@
-[rust]
-lld = true
+[env]
+CARGO_WORKSPACE_DIR = { value = "", relative = true }
 
-# x86_64-unknown-linux-gnu (lld)
-# [target.x86_64-unknown-linux-gnu]
-# rustflags = ["-C", "linker=clang", "-C", "link-arg=-fuse-ld=lld"]
+[alias]
+lint = "clippy --workspace --all-targets -- --deny warnings"
 
 [target.'cfg(all())']
 rustflags = [
-  # UUID Unstable for Uuid::now_v7()
-  # https://docs.rs/uuid/1.4.0/uuid/index.html#unstable-features
-  "--cfg",
-  "uuid_unstable",
-  # Tokio Unstable for `console` feature
-  # https://github.com/tokio-rs/console#instrumenting-your-program
-  "--cfg",
-  "tokio_unstable",
+  # CLIPPY LINT SETTINGS
+  # This is a workaround to configure lints for the entire workspace, pending the ability to configure this via TOML.
+  # See: `https://github.com/rust-lang/cargo/issues/5034`
+  #      `https://github.com/EmbarkStudios/rust-ecosystem/issues/22#issuecomment-947011395`
+  "-Wclippy::all", # all lints that are on by default (correctness, suspicious, style, complexity, perf)
+
+    # restriction
+  "-Wclippy::dbg_macro",
+  # Disable this as semantics of `expect` and `Result` are different.
+  # See: `https://github.com/web-infra-dev/rspack/pull/4848`
+  # "-Wclippy::unwrap_in_result",
+  "-Wclippy::unwrap_used",
+  "-Wclippy::empty_drop",
+  "-Wclippy::exit",
+  "-Wclippy::empty_structs_with_brackets",
+  "-Wclippy::rc_buffer",
+  "-Wclippy::rc_mutex",
+  "-Wclippy::same_name_method",
+
+  "-Aclippy::default_constructed_unit_structs",
+  "-C", "symbol-mangling-version=v0",
+  "--cfg", "tokio_unstable"
 ]
-
-# x86_64-v3 (Intel Haswell / AMD Excavator and above)
-# https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels
-[target.'cfg(target_arch = "x86_64")']
-rustflags = ["-C", "target-cpu=x86-64-v3"]
-
-# aarch64 (ARM Neon)
-[target.'cfg(target_arch = "aarch64")']
-rustflags = ["-C", "target-feature=+neon"]
