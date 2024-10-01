@@ -1,0 +1,28 @@
+[package]
+name = "mosaic_api"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+readme.workspace = true
+license.workspace = true
+authors.workspace = true
+description.workspace = true
+documentation.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lib]
+name = "mosaic_api"
+path = "src/lib.rs"
+
+[dependencies]
+mosaic_utils = { workspace = true }
+github-languages = { version = "0.2"}
+tracing = { workspace = true }
+axum = { workspace = true }
+serde = { workspace = true }
+utoipa = { workspace = true }
+utoipa-axum = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+serde_json = { workspace = true }

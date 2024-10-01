@@ -1,0 +1,115 @@
+[workspace.package]
+version = "0.1.0"
+authors = ["Lucas Nørgård <lucasnrgaard@gmail.com>"]
+edition = "2021"
+rust-version = "1.75"
+description = "An API Gateway for your projects"
+documentation = "https://mosaic.luxass.dev/docs"
+readme = "README.md"
+homepage = "https://mosaic.luxass.dev"
+repository = "https://github.com/luxass/mosaic"
+license = "MIT"
+publish = false
+
+
+[package]
+name = "mosaic"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+readme.workspace = true
+license.workspace = true
+authors.workspace = true
+description.workspace = true
+documentation.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+codegen-units = 1
+lto = "fat"
+opt-level = "z"
+panic = "abort"
+strip = "symbols"
+
+[features]
+default = ["mosaic_tracing/console", "mosaic_tracing/pretty"]
+snmalloc = ["dep:snmalloc-rs"]
+# mosaic_tracing
+tracing_conosle = ["mosaic_tracing/console"]
+tracing_json = ["mosaic_tracing/json"]
+tracing_pretty = ["mosaic_tracing/pretty"]
+
+[workspace]
+members = [
+	".",
+	"crates/server",
+	"crates/tracing",
+	"crates/utils",
+	"crates/cron",
+	"crates/events_api",
+	"crates/projects_api",
+	"crates/mosaic_api",
+]
+
+[workspace.dependencies]
+mosaic_tracing = { path = "./crates/tracing" }
+mosaic_utils = { path = "./crates/utils" }
+mosaic_server = { path = "./crates/server" }
+mosaic_cron = { path = "./crates/cron" }
+mosaic_events_api = { path = "./crates/events_api" }
+mosaic_projects_api = { path = "./crates/projects_api" }
+mosaic_api = { path = "./crates/mosaic_api" }
+anyhow = "1.0"
+axum = { version = "0.7", features = ["tokio", "macros"] }
+base64 = "0.22"
+chrono = "0.4"
+tracing = { version = "0.1" }
+reqwest = { version = "0.12", default-features = false, features = [
+	"json",
+	"rustls-tls",
+] }
+url = { version = "2.4", features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+tower = { version = "0.5", features = ["util", "timeout"] }
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+thiserror = "1"
+utoipa = { version = "5.0.0-beta", features = ["axum_extras", "chrono"] }
+utoipa-axum = "0.1.0-beta"
+utoipa-scalar = { version = "0.2.0-beta", features = ["axum"] }
+apalis = { version = "0.6.0-rc", default-features = false, features = [
+	"tokio-comp",
+	"tracing",
+] }
+toml = "0.8"
+apalis-cron = "0.6.0-rc"
+sqlx = { version = "0.8.2", features = [ "runtime-tokio", "postgres", "json", "chrono", "uuid"] }
+schemars = "0.8"
+uuid = { version = "1.8", features = [
+    "v4",
+    "v7",
+    "fast-rng",
+    "macro-diagnostics",
+		"serde"
+] }
+
+[dependencies]
+mosaic_tracing = { workspace = true }
+mosaic_utils = { workspace = true }
+mosaic_server = { workspace = true }
+human-panic = "2"
+dotenvy = "0.15"
+tokio = { workspace = true }
+tracing = { workspace = true }
+snmalloc-rs = { version = "0.3", default-features = false, features = [
+	"build_cc",
+], optional = true }
+sqlx = { workspace = true }
