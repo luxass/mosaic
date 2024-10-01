@@ -2,6 +2,8 @@ use mosaic_utils::AppState;
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
 
+use crate::models::Project;
+
 mod all_projects;
 mod get_project;
 mod get_project_config;
@@ -9,7 +11,14 @@ mod get_project_config;
 pub const TAG: &str = "Projects";
 
 #[derive(OpenApi)]
-#[openapi(tags((name = TAG, description = "Projects API")))]
+#[openapi(
+  components(schemas(
+    Project
+  )),
+  tags(
+    (name = TAG, description = "Projects API")
+  )
+)]
 pub struct ProjectsApi;
 
 pub fn routes() -> OpenApiRouter<AppState> {

@@ -8,8 +8,8 @@ use crate::{models::Project, TAG};
   path = "/api/v1/projects",
   tag = TAG,
   responses(
-    (status = OK, description = "List of Projects"),
-    (status = INTERNAL_SERVER_ERROR, description = "Internal server error")
+    (status = OK, description = "List of Projects", body = Vec<Project>),
+    (status = INTERNAL_SERVER_ERROR, description = "Internal server error", body = ApiError)
   )
 )]
 #[debug_handler]

@@ -10,11 +10,15 @@ use crate::TAG;
 
 #[utoipa::path(
   get,
-  path = "/api/v1/projects/{project_id}/config",
   tag = TAG,
+  path = "/api/v1/projects/{project_id}/config",
+  params(
+    ("project_id", Path, description = "Id of the project"),
+  ),
   responses(
-    (status = OK, description = "List of Projects"),
-    (status = INTERNAL_SERVER_ERROR, description = "Internal server error")
+    (status = OK, description = "The Project Config for the given project", body = MosaicConfig),
+    (status = NOT_FOUND, description = "Project not found", body = ApiError),
+    (status = INTERNAL_SERVER_ERROR, description = "Internal server error", body = ApiError),
   )
 )]
 #[debug_handler]
