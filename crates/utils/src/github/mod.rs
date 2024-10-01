@@ -4,7 +4,10 @@ use axum::http::{HeaderMap, HeaderValue};
 use chrono::Utc;
 use graphql_client::GraphQLQuery;
 use profile_query::ProfileQueryViewer;
-use reqwest::{header::{AUTHORIZATION, USER_AGENT}, Method};
+use reqwest::{
+  header::{AUTHORIZATION, USER_AGENT},
+  Method,
+};
 use serde::{Deserialize, Serialize};
 
 use crate::{error::GitHubErrorBody, AppError};
@@ -60,7 +63,8 @@ impl GitHubClient {
       let events = response.json::<Vec<models::events::Event>>().await?;
       Ok(events)
     } else {
-      let status = response.status();
+      // TODO: fix this
+      let _status = response.status();
       let error_body = response
         .text()
         .await
@@ -105,11 +109,11 @@ impl GitHubClient {
 
       Ok(profile.data.unwrap().viewer)
     } else {
-      return Err(AppError::GitHubError(GitHubErrorBody {
+      Err(AppError::GitHubError(GitHubErrorBody {
         documentation_url: None,
         errors: None,
         message: "Failed to fetch user profile".to_string(),
-      }));
+      }))
     }
   }
 
@@ -136,11 +140,14 @@ impl GitHubClient {
         .await
         .unwrap_or_else(|_| "Unknown error".to_string());
 
-      return Err(AppError::GitHubError(GitHubErrorBody {
+      Err(AppError::GitHubError(GitHubErrorBody {
         documentation_url: None,
         errors: None,
-        message: format!("GitHub API error: status = {}, message = {}", status, error_body),
-      }));
+        message: format!(
+          "GitHub API error: status = {}, message = {}",
+          status, error_body
+        ),
+      }))
     } else {
       let languages = response.json::<HashMap<String, i32>>().await?;
       Ok(languages)
@@ -167,7 +174,6 @@ impl GitHubClient {
       .send()
       .await?;
 
-
     if !response.status().is_success() {
       let status = response.status();
       let error_body = response
@@ -175,26 +181,27 @@ impl GitHubClient {
         .await
         .unwrap_or_else(|_| "Unknown error".to_string());
 
-      return Err(AppError::GitHubError(GitHubErrorBody {
+      Err(AppError::GitHubError(GitHubErrorBody {
         documentation_url: None,
         errors: None,
-        message: format!("GitHub API error: status = {}, message = {}", status, error_body),
-      }));
+        message: format!(
+          "GitHub API error: status = {}, message = {}",
+          status, error_body
+        ),
+      }))
+    } else {
+      let content = response
+        .json::<GitHubContentObject>()
+        .await
+        .map_err(|err| {
+          tracing::error!("Error parsing GitHub content response: {:?}", err);
+          AppError::ParseConfigError(err.to_string())
+        })?;
+
+      Ok(content)
     }
-
-    let content = response
-      .json::<GitHubContentObject>()
-      .await
-      .map_err(|err| {
-        tracing::error!("Error parsing GitHub content response: {:?}", err);
-        AppError::ParseConfigError(err.to_string())
-      })?;
-
-    Ok(content)
   }
-
 }
-
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GitHubContentObject {
