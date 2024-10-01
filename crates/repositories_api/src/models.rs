@@ -35,6 +35,10 @@ pub struct MosaicRepository {
   /// The owner of the repository
   pub last_updated: Option<DateTime<Utc>>,
 
+  #[schema(example = "2024-10-01T04:56:58.943350Z")]
+  /// The owner of the repository
+  pub created_at: Option<DateTime<Utc>>,
+
   #[schema(inline = false, schema_with = mosaic_config_ref, required)]
   /// The config corresponding to the repository
   pub config: Option<sqlx::types::JsonValue>,
