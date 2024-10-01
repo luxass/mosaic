@@ -1,9 +1,8 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use utoipa::{
-  openapi::{
-    schema::RefBuilder, Ref,
-  }, ToSchema,
+  openapi::{schema::RefBuilder, Ref},
+  ToSchema,
 };
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
