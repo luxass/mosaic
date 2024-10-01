@@ -11,9 +11,9 @@ use crate::TAG;
 #[utoipa::path(
   get,
   tag = TAG,
-  path = "/api/v1/projects/{project_id}/config",
+  path = "/api/v1/repositories/{mosaic_repository_id}/config",
   params(
-    ("project_id", Path, description = "Id of the project"),
+    ("mosaic_repository_id", Path, description = "Id of the project"),
   ),
   responses(
     (status = OK, description = "The Project Config for the given project", body = MosaicConfig),
@@ -23,10 +23,10 @@ use crate::TAG;
 )]
 #[debug_handler]
 pub async fn handler(
-  Path(project_id): Path<Uuid>,
+  Path(mosaic_repository_id): Path<Uuid>,
   State(state): State<AppState>,
 ) -> Result<Json<MosaicConfig>, ApiErrorResponse> {
-  match sqlx::query_scalar!("SELECT config FROM projects WHERE id = $1", project_id)
+  match sqlx::query_scalar!("SELECT config FROM mosaic_repositories WHERE id = $1", mosaic_repository_id)
     .fetch_one(&state.db)
     .await
   {

@@ -9,7 +9,7 @@ use crate::openapi::ApiDoc;
 pub fn routes() -> Router<AppState> {
   let (api_router, api) = OpenApiRouter::with_openapi(ApiDoc::openapi())
     .merge(mosaic_events_api::routes())
-    .merge(mosaic_projects_api::routes())
+    .merge(mosaic_repositories_api::routes())
     .merge(mosaic_api::routes())
     .split_for_parts();
 

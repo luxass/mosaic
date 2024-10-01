@@ -1,6 +1,4 @@
-DROP TABLE IF EXISTS projects;
-
-CREATE TABLE IF NOT EXISTS projects (
+CREATE TABLE IF NOT EXISTS mosaic_repositories (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   github_id INTEGER NOT NULL UNIQUE,
   name_with_owner TEXT NOT NULL UNIQUE,
@@ -11,6 +9,6 @@ CREATE TABLE IF NOT EXISTS projects (
   config JSON NOT NULL DEFAULT '{}'
 );
 
-CREATE INDEX idx_projects_github_id ON projects(github_id);
-CREATE INDEX idx_projects_name ON projects(name);
-CREATE INDEX idx_projects_last_updated ON projects(last_updated);
+CREATE INDEX idx_mosaic_repositories_github_id ON mosaic_repositories(github_id);
+CREATE INDEX idx_mosaic_repositories_name ON mosaic_repositories(name);
+CREATE INDEX idx_mosaic_repositories_last_updated ON mosaic_repositories(last_updated);

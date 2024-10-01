@@ -1409,7 +1409,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mosaic_projects_api"
+name = "mosaic_repositories_api"
 version = "0.1.0"
 dependencies = [
  "axum",
@@ -1432,7 +1432,7 @@ dependencies = [
  "mosaic_api",
  "mosaic_cron",
  "mosaic_events_api",
- "mosaic_projects_api",
+ "mosaic_repositories_api",
  "mosaic_utils",
  "tokio",
  "tower-http",
@@ -3016,6 +3016,7 @@ dependencies = [
  "quote",
  "regex",
  "syn 2.0.79",
+ "uuid",
 ]
 
 [[package]]

@@ -54,7 +54,7 @@ members = [
 	"crates/utils",
 	"crates/cron",
 	"crates/events_api",
-	"crates/projects_api",
+	"crates/repositories_api",
 	"crates/mosaic_api",
 ]
 
@@ -64,7 +64,7 @@ mosaic_utils = { path = "./crates/utils" }
 mosaic_server = { path = "./crates/server" }
 mosaic_cron = { path = "./crates/cron" }
 mosaic_events_api = { path = "./crates/events_api" }
-mosaic_projects_api = { path = "./crates/projects_api" }
+mosaic_repositories_api = { path = "./crates/repositories_api" }
 mosaic_api = { path = "./crates/mosaic_api" }
 anyhow = "1.0"
 axum = { version = "0.7", features = ["tokio", "macros"] }
@@ -82,7 +82,7 @@ tokio = { version = "1.0", features = ["full"] }
 tower = { version = "0.5", features = ["util", "timeout"] }
 tower-http = { version = "0.5", features = ["cors", "trace"] }
 thiserror = "1"
-utoipa = { version = "5.0.0-beta", features = ["axum_extras", "chrono"] }
+utoipa = { version = "5.0.0-beta", features = ["axum_extras", "chrono", "uuid"] }
 utoipa-axum = "0.1.0-beta"
 utoipa-scalar = { version = "0.2.0-beta", features = ["axum"] }
 apalis = { version = "0.6.0-rc", default-features = false, features = [
