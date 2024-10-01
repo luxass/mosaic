@@ -11,7 +11,7 @@ pub struct WrappedStatusCode(NonZeroU16);
 
 impl From<StatusCode> for WrappedStatusCode {
   fn from(status: StatusCode) -> Self {
-      WrappedStatusCode(NonZeroU16::new(status.as_u16()).expect("status code is always non-zero"))
+    WrappedStatusCode(NonZeroU16::new(status.as_u16()).expect("status code is always non-zero"))
   }
 }
 
@@ -65,7 +65,6 @@ pub enum AppError {
   #[error("config error: {0}")]
   ResolveConfigError(String),
 }
-
 
 #[derive(Serialize, Deserialize, ToSchema)]
 pub struct ApiError {

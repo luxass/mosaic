@@ -12,5 +12,5 @@ pub struct Project {
   pub url: String,
   pub last_updated: Option<DateTime<Utc>>,
   // pub config: Option<Json<MosaicConfig>>,
-  pub config: Option<sqlx::types::JsonValue>
+  pub config: Option<sqlx::types::JsonValue>,
 }

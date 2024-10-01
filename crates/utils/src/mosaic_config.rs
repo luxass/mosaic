@@ -4,7 +4,6 @@ use utoipa::ToSchema;
 
 use crate::{AppError, AppState};
 
-
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ToSchema)]
 pub struct MosaicConfig {
   pub project: MosaicProjectConfig,
@@ -90,11 +89,11 @@ pub struct MosaicPackageConfig {
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ToSchema)]
 /// The type of package.
 pub enum PackageType {
-  #[serde(alias="npm", alias="node")]
+  #[serde(alias = "npm", alias = "node")]
   /// For NPM Packages
   /// Aliases: npm, node
   NPM,
-  #[serde(alias="cargo", alias="crates", alias="rust")]
+  #[serde(alias = "cargo", alias = "crates", alias = "rust")]
   /// For Rust Crates
   /// Aliases: cargo, crates, rust
   Cargo,
@@ -167,5 +166,7 @@ pub async fn resolve_config(
     });
   }
 
-  Err(AppError::ResolveConfigError("an unhandled error occurred".to_owned()))
+  Err(AppError::ResolveConfigError(
+    "an unhandled error occurred".to_owned(),
+  ))
 }

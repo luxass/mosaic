@@ -1,6 +1,6 @@
 use mosaic_utils::{
   AppState, MosaicConfig, MosaicPackageConfig, MosaicProjectConfig, MosaicReadmeConfig,
-  MosaicWebsiteConfig, ResolvedConfig, PackageType
+  MosaicWebsiteConfig, PackageType, ResolvedConfig,
 };
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};

@@ -1,10 +1,12 @@
-use axum::{debug_handler, extract::{Path, State}, Json};
+use axum::{
+  debug_handler,
+  extract::{Path, State},
+  Json,
+};
 use mosaic_utils::{ApiErrorResponse, AppError, AppState};
 use uuid::Uuid;
 
 use crate::{models::Project, TAG};
-
-
 
 #[utoipa::path(
   get,
@@ -18,7 +20,7 @@ use crate::{models::Project, TAG};
 #[debug_handler]
 pub async fn handler(
   Path(project_id): Path<Uuid>,
-  State(state): State<AppState>
+  State(state): State<AppState>,
 ) -> Result<Json<Project>, ApiErrorResponse> {
   match sqlx::query_as!(Project, "SELECT * FROM projects WHERE id = $1", project_id)
     .fetch_one(&state.db)

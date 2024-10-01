@@ -5,8 +5,8 @@ use axum::{
   extract::{Path, State},
   Json,
 };
-use mosaic_utils::{ApiErrorResponse, AppState};
 use github_languages::LANGUAGES;
+use mosaic_utils::{ApiErrorResponse, AppState};
 
 use crate::TAG;
 
@@ -29,9 +29,13 @@ pub async fn handler(
   Path((username, repository_name)): Path<(String, String)>,
   State(state): State<AppState>,
 ) -> Result<Json<HashMap<String, String>>, ApiErrorResponse> {
-  match state.github.get_languages(&username, &repository_name).await {
+  match state
+    .github
+    .get_languages(&username, &repository_name)
+    .await
+  {
     Ok(_languages) => {
-      let  mut languages: HashMap<String, String> = HashMap::new();
+      let mut languages: HashMap<String, String> = HashMap::new();
 
       for (language, _) in _languages {
         let found = LANGUAGES.get_by_name(&language);
@@ -43,9 +47,7 @@ pub async fn handler(
       }
 
       Ok(Json(languages))
-    },
-    Err(err) => {
-      Err(ApiErrorResponse::from(err))
     }
+    Err(err) => Err(ApiErrorResponse::from(err)),
   }
 }

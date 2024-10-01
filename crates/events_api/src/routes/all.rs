@@ -13,7 +13,9 @@ use crate::{models::MosaicEvent, TAG};
   )
 )]
 #[debug_handler]
-pub async fn get_events(State(state): State<AppState>) -> Result<Json<Vec<MosaicEvent>>, ApiErrorResponse> {
+pub async fn get_events(
+  State(state): State<AppState>,
+) -> Result<Json<Vec<MosaicEvent>>, ApiErrorResponse> {
   match state.github.get_user_events("luxass").await {
     Ok(events) => {
       let mapped_events = events

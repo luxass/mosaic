@@ -9,11 +9,11 @@ use crate::tasks;
 pub struct ProjectsUpdate(DateTime<Utc>);
 
 impl From<DateTime<Utc>> for ProjectsUpdate {
-    fn from(t: DateTime<Utc>) -> Self {
-        Self(t)
-    }
+  fn from(t: DateTime<Utc>) -> Self {
+    Self(t)
+  }
 }
 
 pub async fn update_projects(_job: ProjectsUpdate, data: Data<AppState>) -> bool {
-    tasks::update_projects(&data).await.is_ok()
+  tasks::update_projects(&data).await.is_ok()
 }

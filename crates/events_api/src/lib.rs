@@ -1,4 +1,4 @@
-pub mod routes;
 mod models;
+pub mod routes;
 
 pub use routes::{routes, TAG};

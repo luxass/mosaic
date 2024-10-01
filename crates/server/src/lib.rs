@@ -7,8 +7,8 @@ use tower_http::{
 };
 use tracing::Level;
 
-mod routes;
 mod openapi;
+mod routes;
 
 pub async fn run(state: AppState) -> Result<(), AppError> {
   let env = state.env.clone();
