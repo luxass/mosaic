@@ -107,6 +107,15 @@ impl GitHubClient {
         }));
       }
 
+      if profile.data.is_none() {
+        return Err(AppError::GitHubError(GitHubErrorBody {
+          documentation_url: None,
+          errors: None,
+          message: "Failed to fetch user profile".to_string(),
+        }));
+      }
+
+
       Ok(profile.data.unwrap().viewer)
     } else {
       Err(AppError::GitHubError(GitHubErrorBody {
@@ -225,7 +234,9 @@ impl GitHubContentObject {
     self.content.as_ref().map(|c| {
       let mut content = c.as_bytes().to_owned();
       content.retain(|b| !b" \n\t\r\x0b\x0c".contains(b));
-      let c = base64::prelude::BASE64_STANDARD.decode(content).unwrap();
+      let c = base64::prelude::BASE64_STANDARD
+        .decode(content)
+        .expect("could not decode github content");
       String::from_utf8_lossy(&c).into_owned()
     })
   }

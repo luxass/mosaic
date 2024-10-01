@@ -11,5 +11,13 @@ pub async fn get_json_schema() -> impl IntoResponse {
   let generator = settings.into_generator();
   let schema = generator.into_root_schema_for::<MosaicConfig>();
 
-  serde_json::to_string_pretty(&schema).unwrap()
+  // TODO: handle this error
+
+  match serde_json::to_string_pretty(&schema) {
+    Ok(json_schema) => json_schema,
+    Err(err) => {
+      tracing::error!("failed to serialize json schema: {}", err);
+      "{}".to_string()
+    }
+  }
 }
