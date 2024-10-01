@@ -3,9 +3,9 @@ use axum::{
   extract::{Path, State},
   Json,
 };
-use mosaic_utils::{ApiErrorResponse, AppState, ResolvedConfig};
+use mosaic_utils::{resolve_config, ApiErrorResponse, AppEnv, AppError, AppState, ResolvedConfig};
 
-use crate::TAG;
+use crate::{models::ResolvedProject, TAG};
 
 #[utoipa::path(
   get,
@@ -25,7 +25,7 @@ use crate::TAG;
 pub async fn handler(
   Path((username, repository_name)): Path<(String, String)>,
   State(state): State<AppState>,
-) -> Result<Json<ResolvedConfig>, ApiErrorResponse> {
+) -> Result<Json<Vec<ResolvedProject>>, ApiErrorResponse> {
   let resolved_config = mosaic_utils::resolve_config(&state, &username, &repository_name)
     .await
     .map_err(|err| {
@@ -33,5 +33,43 @@ pub async fn handler(
       ApiErrorResponse::from(err)
     })?;
 
-  Ok(Json(resolved_config))
+  let repository = state
+    .github
+    .get_repository(&username, &repository_name)
+    .await
+    .map_err(|err| {
+      tracing::error!("Error getting repository: {:?}", err);
+      ApiErrorResponse::from(err)
+    })?;
+
+  let mosaic_config = resolved_config.content;
+
+  if mosaic_config.base_config.project.ignore {
+    return Err(ApiErrorResponse::from(AppError::IgnoredProject));
+  }
+
+  let mut resolved_projects: Vec<ResolvedProject> = Vec::new();
+
+  if let Some(_workspace_config) = &mosaic_config.workspace {
+    return Err(ApiErrorResponse::from(AppError::Unknown));
+  }
+
+
+  let project = ResolvedProject {
+    name: if let Some(name) = &mosaic_config.base_config.project.name {
+      name.clone()
+    } else {
+      repository_name.clone()
+    },
+    ignore: mosaic_config.base_config.project.ignore,
+    priority: mosaic_config.base_config.project.priority,
+    description: mosaic_config.base_config.project.description.clone(),
+    handle: mosaic_config.base_config.project.handle.clone(),
+    version: Some("0.0.1".to_string()),
+    stars: Some(10),
+  };
+
+  resolved_projects.push(project);
+
+  Ok(Json(resolved_projects))
 }

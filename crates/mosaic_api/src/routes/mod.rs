@@ -1,6 +1,6 @@
 use mosaic_utils::{
-  AppState, MosaicConfig, MosaicPackageConfig, MosaicProjectConfig, MosaicReadmeConfig,
-  MosaicWebsiteConfig, PackageType, ResolvedConfig,
+  AppState, BaseMosaicConfig, MosaicConfig, MosaicPackageConfig, MosaicProjectConfig,
+  MosaicReadmeConfig, MosaicWebsiteConfig, MosaicWorkspaceConfig, PackageType, ResolvedConfig,
 };
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
@@ -21,6 +21,8 @@ pub const TAG: &str = "Mosaic";
     MosaicPackageConfig,
     MosaicProjectConfig,
     MosaicReadmeConfig,
+    MosaicWorkspaceConfig,
+    BaseMosaicConfig,
     PackageType
   )),
   tags(

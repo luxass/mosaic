@@ -13,6 +13,6 @@ pub use graceful_shutdown::shutdown_signal;
 pub use json_schema::get_json_schema;
 pub use mosaic_config::{
   resolve_config, MosaicConfig, MosaicPackageConfig, MosaicProjectConfig, MosaicReadmeConfig,
-  MosaicWebsiteConfig, PackageType, ResolvedConfig,
+  MosaicWebsiteConfig, PackageType, ResolvedConfig, MosaicWorkspaceConfig, BaseMosaicConfig
 };
 pub use version::VERSION;

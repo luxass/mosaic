@@ -55,6 +55,9 @@ pub enum AppError {
   #[error("Not found")]
   NotFound,
 
+  #[error("Ignored project")]
+  IgnoredProject,
+
   // TODO: Add more details to TaskError
   #[error("Task error: {0}")]
   TaskError(String),

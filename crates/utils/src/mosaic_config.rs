@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -5,7 +7,7 @@ use utoipa::ToSchema;
 use crate::{AppError, AppState};
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ToSchema)]
-pub struct MosaicConfig {
+pub struct BaseMosaicConfig {
   pub project: MosaicProjectConfig,
   #[serde(skip_serializing_if = "Option::is_none")]
   pub readme: Option<MosaicReadmeConfig>,
@@ -15,10 +17,34 @@ pub struct MosaicConfig {
   pub package: Option<MosaicPackageConfig>,
 }
 
+#[derive(Debug, Serialize, Deserialize, JsonSchema, ToSchema)]
+pub struct MosaicConfig {
+  #[serde(flatten)]
+  pub base_config: BaseMosaicConfig,
+  #[serde(skip_serializing_if = "Option::is_none")]
+  pub workspace: Option<MosaicWorkspaceConfig>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Default, JsonSchema, ToSchema)]
+pub struct MosaicWorkspaceConfig {
+  /// Include the workspace of the project.
+  pub enabled: bool,
+
+  #[serde(skip_serializing_if = "Option::is_none")]
+  /// The ignored projects in this workspace.
+  pub ignores: Option<Vec<String>>,
+
+  #[serde(skip_serializing_if = "Option::is_none")]
+  /// Overrides
+  pub overrides: Option<HashMap<String, BaseMosaicConfig>>,
+}
+
 #[derive(Debug, Serialize, Deserialize, Default, JsonSchema, ToSchema)]
 pub struct MosaicProjectConfig {
+  #[serde(skip_serializing_if = "Option::is_none")]
   /// The name of the project.
-  pub name: String,
+  /// By default the name will be inferred from the repository name.
+  pub name: Option<String>,
   #[serde(skip_serializing_if = "Option::is_none")]
   /// The description of the project.
   pub description: Option<String>,
@@ -28,7 +54,7 @@ pub struct MosaicProjectConfig {
   #[serde(default = "default_priority")]
   /// The priority of the project.
   /// The higher the number, the higher the priority.
-  pub priority: i32,
+  pub priority: u8,
   #[serde(default)]
   /// Automatically infer the version of the project
   /// based on multiple sources.
@@ -71,19 +97,19 @@ pub struct MosaicReadmeConfig {
 #[derive(Debug, Serialize, Deserialize, Default, JsonSchema, ToSchema)]
 pub struct MosaicPackageConfig {
   /// Include information about the package.
-  enabled: bool,
+  pub enabled: bool,
   #[serde(skip_serializing_if = "Option::is_none")]
   /// The package type.
   /// By default the package type will be inferred from the repository.
-  r#type: Option<PackageType>,
+  pub r#type: Option<PackageType>,
   #[serde(default)]
   /// Include the number of downloads.
   /// If the package type's registry supports it.
-  downloads: bool,
+  pub downloads: bool,
   #[serde(skip_serializing_if = "Option::is_none")]
   /// The package name.
   /// By default the package name will be inferred from the repository.
-  name: Option<String>,
+  pub name: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ToSchema)]
@@ -102,23 +128,23 @@ pub enum PackageType {
 #[derive(Debug, Serialize, Deserialize, Default, JsonSchema, ToSchema)]
 pub struct MosaicWebsiteConfig {
   /// Customize the auto-generated page for the project
-  enabled: bool,
+  pub enabled: bool,
   #[serde(skip_serializing_if = "Option::is_none")]
   /// The title of the website.
-  title: Option<String>,
+  pub title: Option<String>,
   #[serde(skip_serializing_if = "Option::is_none")]
   /// The description of the website.
-  description: Option<String>,
+  pub description: Option<String>,
   #[serde(skip_serializing_if = "Option::is_none")]
   /// The URL of the website.
   /// By default the URL will be inferred from the repository.
-  url: Option<String>,
+  pub url: Option<String>,
   #[serde(skip_serializing_if = "Option::is_none")]
   /// The keywords to show on the project page.
-  keywords: Option<Vec<String>>,
+  pub keywords: Option<Vec<String>>,
 }
 
-fn default_priority() -> i32 {
+fn default_priority() -> u8 {
   10
 }
 

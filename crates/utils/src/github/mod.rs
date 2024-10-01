@@ -4,6 +4,7 @@ use axum::http::{HeaderMap, HeaderValue};
 use chrono::Utc;
 use graphql_client::GraphQLQuery;
 use profile_query::ProfileQueryViewer;
+use repository_query::RepositoryQueryRepository;
 use reqwest::{
   header::{AUTHORIZATION, USER_AGENT},
   Method,
@@ -26,6 +27,14 @@ type DateTime = chrono::DateTime<Utc>;
   response_derives = "Debug"
 )]
 pub struct ProfileQuery;
+
+#[derive(GraphQLQuery)]
+#[graphql(
+  schema_path = "github_schema.graphql",
+  query_path = "repository_query.graphql",
+  response_derives = "Debug"
+)]
+pub struct RepositoryQuery;
 
 #[derive(Clone, Debug)]
 pub struct GitHubClient {
@@ -95,34 +104,83 @@ impl GitHubClient {
       .send()
       .await?;
 
-    if response.status().is_success() {
-      let profile = response
-        .json::<graphql_client::Response<profile_query::ResponseData>>()
-        .await?;
-      if let Some(errors) = profile.errors {
-        return Err(AppError::GitHubError(GitHubErrorBody {
-          documentation_url: None,
-          errors: Some(errors.into_iter().map(|e| serde_json::json!(e)).collect()),
-          message: "Failed to fetch user profile".to_string(),
-        }));
-      }
-
-      if profile.data.is_none() {
-        return Err(AppError::GitHubError(GitHubErrorBody {
-          documentation_url: None,
-          errors: None,
-          message: "Failed to fetch user profile".to_string(),
-        }));
-      }
-
-      Ok(profile.data.unwrap().viewer)
-    } else {
-      Err(AppError::GitHubError(GitHubErrorBody {
+    if !response.status().is_success() {
+      tracing::error!("Failed to fetch user profile: {:?}", response);
+      return Err(AppError::GitHubError(GitHubErrorBody {
         documentation_url: None,
         errors: None,
         message: "Failed to fetch user profile".to_string(),
-      }))
+      }));
     }
+
+    let query_response = response
+      .json::<graphql_client::Response<profile_query::ResponseData>>()
+      .await?;
+    if let Some(errors) = query_response.errors {
+      return Err(AppError::GitHubError(GitHubErrorBody {
+        documentation_url: None,
+        errors: Some(errors.into_iter().map(|e| serde_json::json!(e)).collect()),
+        message: "Failed to fetch user profile".to_string(),
+      }));
+    }
+
+    if let Some(profile) = query_response.data {
+      return Ok(profile.viewer);
+    }
+
+    Err(AppError::GitHubError(GitHubErrorBody {
+      documentation_url: None,
+      errors: None,
+      message: "Failed to fetch user profile".to_string(),
+    }))
+  }
+
+  pub async fn get_repository(
+    &self,
+    username: &str,
+    repository_name: &str,
+  ) -> Result<RepositoryQueryRepository, AppError> {
+    let response = self
+      .client
+      .post("https://api.github.com/graphql")
+      .json(&RepositoryQuery::build_query(repository_query::Variables {
+        name: repository_name.to_string(),
+        owner: username.to_string(),
+      }))
+      .send()
+      .await?;
+
+    if !response.status().is_success() {
+      tracing::error!("Failed to fetch repository: {:?}", response);
+      return Err(AppError::GitHubError(GitHubErrorBody {
+        documentation_url: None,
+        errors: None,
+        message: "Failed to fetch repository".to_string(),
+      }));
+    }
+
+    let query_response = response
+      .json::<graphql_client::Response<repository_query::ResponseData>>()
+      .await?;
+    if let Some(errors) = query_response.errors {
+      return Err(AppError::GitHubError(GitHubErrorBody {
+        documentation_url: None,
+        errors: Some(errors.into_iter().map(|e| serde_json::json!(e)).collect()),
+        message: "Failed to fetch user profile".to_string(),
+      }));
+    }
+
+    if let Some(data) = query_response.data {
+      if let Some(repository) = data.repository {
+        return Ok(repository);
+      }
+    }
+
+    Err(AppError::GitHubError(GitHubErrorBody {
+      documentation_url: None,
+      errors: None,
+      message: "Failed to fetch repository".to_string(),
+    }))
   }
 
   pub async fn get_languages(
