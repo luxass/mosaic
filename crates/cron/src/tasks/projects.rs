@@ -107,18 +107,16 @@ pub async fn update_projects(data: &Data<AppState>) -> Result<(), AppError> {
     .await?;
 
     if let Some(_existing_repo) = existing_repo {
-      let update_result = sqlx::query(
-                "UPDATE mosaic_repositories SET name = $1, name_with_owner = $2, config = $3 WHERE github_id = $4",
-            )
-                .bind(&repo.name)
-                .bind(&repo.name_with_owner)
-                .bind(&serde_json::to_value(config)?)
-                .bind(&repo.id)
-                .execute(&data.db)
-                .await;
+      let update_result = sqlx::query!("UPDATE mosaic_repositories SET name = $1, name_with_owner = $2, config = $3, last_updated = current_timestamp, description = $4, url = $5 WHERE github_id = $6",
+        repo.name, repo.name_with_owner, serde_json::to_value(config)?, repo.description, repo.url, repo.id)
+        .execute(&data.db)
+        .await;
 
       if update_result.is_err() {
-        tracing::error!("an error occurred while updating a repository: {:?}", update_result);
+        tracing::error!(
+          "an error occurred while updating a repository: {:?}",
+          update_result
+        );
         repositories_with_errors.push((repo, update_result));
       }
     } else {
@@ -134,12 +132,17 @@ pub async fn update_projects(data: &Data<AppState>) -> Result<(), AppError> {
                 .execute(&data.db)
                 .await;
 
-        if insert_result.is_err() {
-          tracing::error!("an error occurred while inserting a new repository: {:?}", insert_result);
-            repositories_with_errors.push((repo, insert_result));
-        }
+      if insert_result.is_err() {
+        tracing::error!(
+          "an error occurred while inserting a new repository: {:?}",
+          insert_result
+        );
+        repositories_with_errors.push((repo, insert_result));
+      }
     }
   }
+
+  tracing::info!("repositories with errors: {:?}", repositories_with_errors);
 
   Ok(())
 }
