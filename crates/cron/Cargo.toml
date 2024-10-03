@@ -17,6 +17,7 @@ path = "src/lib.rs"
 
 [dependencies]
 mosaic_utils = { workspace = true }
+mosaic_repositories_api = { workspace = true } # Refactor this, so we are importing the models from a different package
 anyhow = { workspace = true }
 apalis = { workspace = true }
 apalis-cron = { workspace = true }
@@ -25,3 +26,4 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 tracing = { workspace = true }
 reqwest = { workspace = true }
+sqlx = { workspace = true }

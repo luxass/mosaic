@@ -11,9 +11,9 @@ pub struct MosaicRepository {
   /// The id of the repository
   pub id: sqlx::types::Uuid,
 
-  #[schema(example = 692848155)]
+  #[schema(example = "R_kgDOJRVGjg")]
   /// The id of the repository on github
-  pub github_id: i64,
+  pub github_id: String,
 
   #[schema(example = "luxass/github-schema")]
   /// The name of the repository with the owner

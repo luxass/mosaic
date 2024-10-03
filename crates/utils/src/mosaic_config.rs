@@ -164,6 +164,8 @@ fn default_priority() -> u8 {
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct ResolvedConfig {
   pub content: MosaicConfig,
+  /// Whether the config is externally sourced.
+  /// If the config is externally sourced, it is loaded from `luxass/luxass`.
   pub external: bool,
 }
 
