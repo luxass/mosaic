@@ -23,8 +23,7 @@ async fn main() -> Result<(), AppError> {
   let db = PgPoolOptions::new()
     .max_connections(20)
     .connect(&env.database_url)
-    .await
-    .unwrap();
+    .await?;
 
   sqlx::migrate!().run(&db).await.unwrap();
 

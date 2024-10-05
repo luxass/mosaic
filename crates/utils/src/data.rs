@@ -18,12 +18,6 @@ pub struct AppEnv {
 }
 
 impl AppEnv {
-  /// # Panics
-  ///
-  /// If `MOSAIC_DOMAIN` and `MOSAIC_PRIMARY_ACCOUNT` are not set,
-  /// it will cause a panic, please refer to the documentation.
-  ///
-  /// <https://mosaic.luxass.dev/docs/environments>
   pub fn init() -> Result<Self, AppError> {
     Ok(Self {
       database_url: env::var("DATABASE_URL")
