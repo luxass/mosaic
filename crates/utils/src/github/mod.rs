@@ -22,16 +22,16 @@ type DateTime = chrono::DateTime<Utc>;
 
 #[derive(GraphQLQuery)]
 #[graphql(
-  schema_path = "github_schema.graphql",
-  query_path = "profile_query.graphql",
+  schema_path = "../../graphql/github_schema.graphql",
+  query_path = "../../graphql/profile_query.graphql",
   response_derives = "Debug"
 )]
 pub struct ProfileQuery;
 
 #[derive(GraphQLQuery)]
 #[graphql(
-  schema_path = "github_schema.graphql",
-  query_path = "repository_query.graphql",
+  schema_path = "../../graphql/github_schema.graphql",
+  query_path = "../../graphql/repository_query.graphql",
   response_derives = "Debug"
 )]
 pub struct RepositoryQuery;
