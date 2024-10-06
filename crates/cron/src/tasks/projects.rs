@@ -2,11 +2,10 @@ use std::collections::HashSet;
 
 use apalis::prelude::Data;
 use mosaic_repositories_api::models::MosaicRepository;
-use mosaic_utils::{resolve_config, AppError, AppState, GitHubClientTrait};
+use mosaic_utils::{resolve_config, AppError, AppState, GraphQLExt};
 
 pub async fn update_projects(data: &Data<AppState>) -> Result<(), AppError> {
   tracing::debug!("start updating projects");
-
   let viewer = data.github.get_user_profile().await?;
   let ignored_projects = fetch_ignored_projects().await?;
   tracing::debug!("{:?}", ignored_projects);

@@ -1,6 +1,7 @@
 use schemars::gen::SchemaSettings;
 use schemars::schema::RootSchema;
-use crate::{MosaicConfig};
+
+use crate::MosaicConfig;
 
 pub async fn get_json_schema() -> RootSchema {
   let settings = SchemaSettings::draft07().with(|s| {

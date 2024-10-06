@@ -35,3 +35,4 @@ tracing = { workspace = true }
 toml = { workspace = true }
 async-trait = { workspace = true }
 mockall = { workspace = true }
+octocrab = { workspace = true }

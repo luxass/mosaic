@@ -26,3 +26,4 @@ utoipa-axum = { workspace = true }
 chrono = { workspace = true }
 uuid = { workspace = true }
 serde_json = { workspace = true }
+octocrab = { workspace = true }

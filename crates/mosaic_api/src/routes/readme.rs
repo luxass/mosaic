@@ -4,7 +4,7 @@ use axum::{
   debug_handler,
   extract::{Path, Query, State},
 };
-use mosaic_utils::{ApiErrorResponse, AppState, GitHubClientTrait};
+use mosaic_utils::{ApiErrorResponse, AppError, AppState};
 use serde::{de, Deserialize, Deserializer};
 use utoipa::IntoParams;
 
@@ -59,14 +59,36 @@ pub async fn get_root_readme_handler(
 ) -> Result<String, ApiErrorResponse> {
   let content = state
     .github
-    .get_content_by_path(&username, &repository_name, "README.md")
+    .repos(&username, &repository_name)
+    .get_content()
+    .path("README.md")
+    .send()
     .await
     .map_err(|err| {
-      tracing::error!("Error getting content by path: {:?}", err);
-      ApiErrorResponse::from(err)
+      tracing::error!("an error occurred while trying to get file: {:?}", err);
+      ApiErrorResponse::from(AppError::from(err))
     })?;
 
-  let decoded_content = content.decoded_content().unwrap();
+  // TODO: improve this
+  // check if any of the items is named README.md
+  let readme = match content.items.iter().any(|item| item.name == "README.md") {
+    true => content
+      .items
+      .iter()
+      .find(|item| item.name == "README.md")
+      .unwrap(),
+    false => {
+      return Err(ApiErrorResponse::from(AppError::NotFound));
+    }
+  };
+
+  let decoded_content = match readme.decoded_content() {
+    None => {
+      tracing::error!("could not decode content");
+      return Err(ApiErrorResponse::from(AppError::Unknown));
+    }
+    Some(content) => content,
+  };
 
   let should_transform = query.transform.unwrap_or(false);
   tracing::debug!("should_transform: {}", should_transform);
@@ -102,14 +124,36 @@ pub async fn get_readme_by_path_handler(
 ) -> Result<String, ApiErrorResponse> {
   let content = state
     .github
-    .get_content_by_path(&username, &repository_name, &path)
+    .repos(&username, &repository_name)
+    .get_content()
+    .path(&path)
+    .send()
     .await
     .map_err(|err| {
-      tracing::error!("Error getting content by path: {:?}", err);
-      ApiErrorResponse::from(err)
+      tracing::error!("an error occurred while trying to get file: {:?}", err);
+      ApiErrorResponse::from(AppError::from(err))
     })?;
 
-  let decoded_content = content.decoded_content().unwrap();
+  // TODO: improve this
+  // check if any of the items is named README.md
+  let readme = match content.items.iter().any(|item| item.name == "README.md") {
+    true => content
+      .items
+      .iter()
+      .find(|item| item.name == "README.md")
+      .unwrap(),
+    false => {
+      return Err(ApiErrorResponse::from(AppError::NotFound));
+    }
+  };
+
+  let decoded_content = match readme.decoded_content() {
+    None => {
+      tracing::error!("could not decode content");
+      return Err(ApiErrorResponse::from(AppError::Unknown));
+    }
+    Some(content) => content,
+  };
 
   let should_transform = query.transform.unwrap_or(false);
   tracing::debug!("should_transform: {}", should_transform);

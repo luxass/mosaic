@@ -25,9 +25,6 @@ documentation.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-[profile.dev]
-opt-level = 1
-
 [profile.dev.package."*"]
 opt-level = 3
 
@@ -53,9 +50,9 @@ members = [
 	"crates/tracing",
 	"crates/utils",
 	"crates/cron",
-	"crates/events_api",
 	"crates/repositories_api",
 	"crates/mosaic_api",
+	"crates/mosaic_package",
 ]
 
 [workspace.dependencies]
@@ -63,9 +60,9 @@ mosaic_tracing = { path = "./crates/tracing" }
 mosaic_utils = { path = "./crates/utils" }
 mosaic_server = { path = "./crates/server" }
 mosaic_cron = { path = "./crates/cron" }
-mosaic_events_api = { path = "./crates/events_api" }
 mosaic_repositories_api = { path = "./crates/repositories_api" }
 mosaic_api = { path = "./crates/mosaic_api" }
+mosaic_package = { path = "./crates/mosaic_package" }
 anyhow = "1.0"
 axum = { version = "0.7", features = ["tokio", "macros"] }
 base64 = "0.22"
@@ -75,6 +72,8 @@ reqwest = { version = "0.12", default-features = false, features = [
 	"json",
 	"rustls-tls",
 ] }
+# TODO: Can't update octocrab atm, because depends on aws-lc-sys because of rustls feature
+octocrab = { version = "0.40.0" }
 async-trait = "0.1"
 url = { version = "2.4", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }

@@ -1,7 +1,7 @@
 use std::{env, path::Path};
 
 use human_panic::{metadata, setup_panic};
-use mosaic_utils::{AppEnv, AppError, AppState, GitHubClient};
+use mosaic_utils::{AppEnv, AppError, AppState};
 use sqlx::postgres::PgPoolOptions;
 
 #[tokio::main]
@@ -27,11 +27,7 @@ async fn main() -> Result<(), AppError> {
 
   sqlx::migrate!().run(&db).await.unwrap();
 
-  let state = AppState {
-    env: env.clone(),
-    github: GitHubClient::new(&env.github_token)?,
-    db,
-  };
+  let state = AppState::new(env, db);
 
   tracing::info!("starting server");
   mosaic_server::run(state).await

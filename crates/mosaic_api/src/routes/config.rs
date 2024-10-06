@@ -4,6 +4,7 @@ use axum::{
   Json,
 };
 use mosaic_utils::{ApiErrorResponse, AppState, ResolvedConfig};
+
 use crate::TAG;
 
 #[utoipa::path(
@@ -28,6 +29,7 @@ pub async fn handler(
   let resolved_config = mosaic_utils::resolve_config(&state, &username, &repository_name)
     .await
     .map_err(|err| {
+      
       tracing::error!("Error resolving config: {:?}", err);
       ApiErrorResponse::from(err)
     })?;

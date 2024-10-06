@@ -1,12 +1,25 @@
 use std::env;
-
-use crate::{AppError, GitHubClient};
+use octocrab::Octocrab;
+use crate::AppError;
 
 #[derive(Clone, Debug)]
 pub struct AppState {
   pub env: AppEnv,
-  pub github: GitHubClient,
+  pub github: Octocrab,
   pub db: sqlx::PgPool,
+}
+
+impl AppState {
+  pub fn new(env: AppEnv, db: sqlx::PgPool) -> Self {
+    Self {
+      env: env.clone(),
+      db,
+      github: Octocrab::builder()
+        .personal_token(env.github_token)
+        .build()
+        .unwrap(),
+    }
+  }
 }
 
 #[derive(Clone, Debug)]

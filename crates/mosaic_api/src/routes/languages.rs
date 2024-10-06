@@ -1,14 +1,13 @@
-use std::collections::HashMap;
-
+use crate::TAG;
+use axum::http::StatusCode;
 use axum::{
   debug_handler,
   extract::{Path, State},
   Json,
 };
 use github_languages::LANGUAGES;
-use mosaic_utils::{ApiErrorResponse, AppState, GitHubClientTrait};
-
-use crate::TAG;
+use mosaic_utils::{ApiErrorResponse, AppError, AppState};
+use std::collections::HashMap;
 
 #[utoipa::path(
   get,
@@ -19,7 +18,9 @@ use crate::TAG;
     ("repository_name", Path, description = "GitHub Repository Name"),
   ),
   responses(
-    (status = OK, description = "An object of languages", body = HashMap<String, String>),
+    (status = OK, description = "An object of languages", body = HashMap<String, String>, example = json!({
+      "Typescript": "#3178c6",
+    })),
     (status = NOT_FOUND, description = "Not found", body = ApiError),
     (status = INTERNAL_SERVER_ERROR, description = "Internal server error", body = ApiError)
   )
@@ -29,25 +30,36 @@ pub async fn handler(
   Path((username, repository_name)): Path<(String, String)>,
   State(state): State<AppState>,
 ) -> Result<Json<HashMap<String, String>>, ApiErrorResponse> {
-  match state
+  let github_languages = state
     .github
-    .get_languages(&username, &repository_name)
+    .repos(&username, &repository_name)
+    .list_languages()
     .await
-  {
-    Ok(_languages) => {
-      let mut languages: HashMap<String, String> = HashMap::new();
+    .map_err(|err| {
+      tracing::error!(
+        "an error occurred while trying to fetch languages used: {:?}",
+        err
+      );
 
-      for (language, _) in _languages {
-        let found = LANGUAGES.get_by_name(&language);
-        if let Some(found) = found {
-          languages.insert(language, found.color.to_owned());
-        } else {
-          languages.insert(language, "".to_owned());
+      if let octocrab::Error::GitHub { source, .. } = err {
+        if source.status_code == StatusCode::NOT_FOUND {
+          return ApiErrorResponse::from(AppError::NotFound);
         }
       }
 
-      Ok(Json(languages))
+      ApiErrorResponse::from(AppError::Unknown)
+    })?;
+
+  let mut languages: HashMap<String, String> = HashMap::new();
+
+  for (language, _) in github_languages {
+    let found = LANGUAGES.get_by_name(&language);
+    if let Some(found) = found {
+      languages.insert(language, found.color.to_owned());
+    } else {
+      languages.insert(language, "".to_owned());
     }
-    Err(err) => Err(ApiErrorResponse::from(err)),
   }
+
+  Ok(Json(languages))
 }

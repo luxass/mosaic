@@ -1,4 +1,5 @@
-use std::{io};
+use std::io;
+
 use axum::Json;
 use chrono::{DateTime, Utc};
 use reqwest::StatusCode;
@@ -36,6 +37,9 @@ pub enum AppError {
 
   #[error("GitHub error: {0}")]
   GitHubError(GitHubErrorBody),
+
+  #[error("Octocrab: {0}")]
+  Octocrab(#[from] octocrab::Error),
 
   #[error("SQLx error: {0}")]
   SqlxError(#[from] sqlx::Error),
@@ -77,10 +81,6 @@ pub struct ApiError {
   pub timestamp: DateTime<Utc>,
 }
 
-fn default_status_code() -> StatusCode {
-  StatusCode::INTERNAL_SERVER_ERROR
-}
-
 fn default_timestamp() -> DateTime<Utc> {
   Utc::now()
 }
@@ -90,10 +90,10 @@ pub type ApiErrorResponse = (StatusCode, Json<ApiError>);
 impl From<&AppError> for StatusCode {
   fn from(value: &AppError) -> Self {
     match value {
-          AppError::NotFound => StatusCode::NOT_FOUND,
-          AppError::IgnoredProject => StatusCode::FORBIDDEN,
-          _ => StatusCode::INTERNAL_SERVER_ERROR,
-      }
+      AppError::NotFound => StatusCode::NOT_FOUND,
+      AppError::IgnoredProject => StatusCode::FORBIDDEN,
+      _ => StatusCode::INTERNAL_SERVER_ERROR,
+    }
   }
 }
 
