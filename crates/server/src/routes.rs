@@ -1,6 +1,6 @@
 use axum::response::IntoResponse;
 use axum::{routing::get, Json, Router};
-use mosaic_utils::{get_json_schema, ApiErrorResponse, AppError, AppState};
+use mosaic_utils::{get_json_schema, AppState};
 use utoipa::OpenApi;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_scalar::{Scalar, Servable};

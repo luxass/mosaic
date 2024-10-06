@@ -1,8 +1,8 @@
+use crate::tasks;
 use apalis::prelude::Data;
 use chrono::{DateTime, Utc};
 use mosaic_utils::AppState;
 use serde::{Deserialize, Serialize};
-use crate::tasks;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ProjectsUpdate(DateTime<Utc>);
