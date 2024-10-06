@@ -33,3 +33,4 @@ uuid = { workspace = true }
 graphql_client = "0.14.0"
 tracing = { workspace = true }
 toml = { workspace = true }
+async-trait = { workspace = true }
