@@ -2,7 +2,6 @@ use apalis::prelude::Data;
 use chrono::{DateTime, Utc};
 use mosaic_utils::AppState;
 use serde::{Deserialize, Serialize};
-use mosaic_utils::GraphQLExt;
 use crate::tasks;
 
 #[derive(Debug, Deserialize, Serialize)]
