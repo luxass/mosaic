@@ -6,6 +6,7 @@ use serde_json::json;
 use utoipa::ToSchema;
 
 use crate::{AppError, AppState};
+use crate::github_client::GitHubClientTrait;
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ToSchema)]
 pub struct BaseMosaicConfig {

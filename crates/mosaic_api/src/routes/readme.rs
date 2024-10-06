@@ -4,7 +4,7 @@ use axum::{
   debug_handler,
   extract::{Path, Query, State},
 };
-use mosaic_utils::{ApiErrorResponse, AppState};
+use mosaic_utils::{ApiErrorResponse, AppState, GitHubClientTrait};
 use serde::{de, Deserialize, Deserializer};
 use utoipa::IntoParams;
 

@@ -1,8 +1,11 @@
 use utoipa::OpenApi;
+use mosaic_utils::ApiError;
 
 #[derive(OpenApi)]
 #[openapi(
   info(title = "Mosaic"),
-  components(schemas(mosaic_utils::ApiError, mosaic_utils::WrappedStatusCode))
+  components(schemas(
+    ApiError
+  ))
 )]
 pub struct ApiDoc;

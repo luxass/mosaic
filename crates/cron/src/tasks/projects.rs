@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use apalis::prelude::Data;
 use mosaic_repositories_api::models::MosaicRepository;
-use mosaic_utils::{resolve_config, AppError, AppState};
+use mosaic_utils::{resolve_config, AppError, AppState, GitHubClientTrait};
 
 pub async fn update_projects(data: &Data<AppState>) -> Result<(), AppError> {
   tracing::debug!("start updating projects");

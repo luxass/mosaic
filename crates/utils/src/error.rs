@@ -1,19 +1,10 @@
-use std::{io, num::NonZeroU16};
-
-use axum::{http::StatusCode, Json};
+use std::{io};
+use axum::Json;
 use chrono::{DateTime, Utc};
+use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use utoipa::ToSchema;
-
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ToSchema, Deserialize, Serialize)]
-pub struct WrappedStatusCode(NonZeroU16);
-
-impl From<StatusCode> for WrappedStatusCode {
-  fn from(status: StatusCode) -> Self {
-    WrappedStatusCode(NonZeroU16::new(status.as_u16()).expect("status code is always non-zero"))
-  }
-}
 
 #[derive(Debug, Deserialize)]
 pub struct GitHubErrorBody {
@@ -73,12 +64,21 @@ pub enum AppError {
 pub struct ApiError {
   /// The Error Message
   pub message: String,
+
+  #[serde(skip)]
+  pub status_code: StatusCode,
+
   #[schema(example = "status = 500", examples("400", "401", "403", "404", "500"))]
   /// The HTTP Status Code
-  pub status: WrappedStatusCode,
+  pub status: u16,
+
   #[serde(default = "default_timestamp")]
   /// The timestamp of the error
   pub timestamp: DateTime<Utc>,
+}
+
+fn default_status_code() -> StatusCode {
+  StatusCode::INTERNAL_SERVER_ERROR
 }
 
 fn default_timestamp() -> DateTime<Utc> {
@@ -87,14 +87,24 @@ fn default_timestamp() -> DateTime<Utc> {
 
 pub type ApiErrorResponse = (StatusCode, Json<ApiError>);
 
+impl From<&AppError> for StatusCode {
+  fn from(value: &AppError) -> Self {
+    match value {
+          AppError::NotFound => StatusCode::NOT_FOUND,
+          AppError::IgnoredProject => StatusCode::FORBIDDEN,
+          _ => StatusCode::INTERNAL_SERVER_ERROR,
+      }
+  }
+}
+
 impl From<AppError> for ApiErrorResponse {
   fn from(err: AppError) -> Self {
-    let status_code = StatusCode::INTERNAL_SERVER_ERROR;
-
+    let status_code = StatusCode::from(&err);
     let payload: Json<ApiError> = Json::from(ApiError {
       message: err.to_string(),
-      status: status_code.into(),
-      timestamp: chrono::offset::Utc::now(),
+      status_code,
+      status: status_code.as_u16(),
+      timestamp: Utc::now(),
     });
     (status_code, payload)
   }

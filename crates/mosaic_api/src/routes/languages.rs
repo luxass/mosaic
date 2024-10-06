@@ -6,7 +6,7 @@ use axum::{
   Json,
 };
 use github_languages::LANGUAGES;
-use mosaic_utils::{ApiErrorResponse, AppState};
+use mosaic_utils::{ApiErrorResponse, AppState, GitHubClientTrait};
 
 use crate::TAG;
 

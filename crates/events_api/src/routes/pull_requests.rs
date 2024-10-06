@@ -1,5 +1,5 @@
 use axum::{debug_handler, extract::State, Json};
-use mosaic_utils::{ApiErrorResponse, AppState};
+use mosaic_utils::{ApiErrorResponse, AppState, GitHubClientTrait};
 
 use crate::{models::MosaicEvent, TAG};
 

@@ -4,7 +4,6 @@ use axum::{
   Json,
 };
 use mosaic_utils::{ApiErrorResponse, AppState, ResolvedConfig};
-
 use crate::TAG;
 
 #[utoipa::path(

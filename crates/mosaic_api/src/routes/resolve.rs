@@ -3,7 +3,7 @@ use axum::{
   extract::{Path, State},
   Json,
 };
-use mosaic_utils::{ApiErrorResponse, AppError, AppState};
+use mosaic_utils::{ApiErrorResponse, AppError, AppState, GitHubClientTrait};
 
 use crate::{models::ResolvedProject, TAG};
 
