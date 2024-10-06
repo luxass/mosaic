@@ -205,7 +205,7 @@ pub async fn resolve_config(
             AppError::from(err)
         })?;
 
-    let content = match content_items.items.get(0) {
+    let content = match content_items.items.first() {
         None => {
             return Err(AppError::ResolveConfigError("mosaic config not found".to_string()));
         }
