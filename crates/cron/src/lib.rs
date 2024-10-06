@@ -11,8 +11,7 @@ mod jobs;
 mod tasks;
 
 pub async fn run(state: AppState) -> Result<(), AppError> {
-  // let update_projects_schedule = Schedule::from_str("0 */5 * * * *").unwrap();
-  let update_projects_schedule = Schedule::from_str("0 */5 * * * *").unwrap();
+  let update_projects_schedule = Schedule::from_str("0 */60 * * * *").unwrap();
   let update_projects_worker = WorkerBuilder::new("mosaic_cron::jobs::update_projects")
     .data(state)
     .backend(CronStream::new(update_projects_schedule))
