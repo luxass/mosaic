@@ -1498,6 +1498,7 @@ dependencies = [
  "chrono",
  "mosaic_repositories_api",
  "mosaic_utils",
+ "octocrab",
  "reqwest",
  "serde",
  "serde_json",

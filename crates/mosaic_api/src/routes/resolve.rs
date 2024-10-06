@@ -1,13 +1,8 @@
-use std::collections::HashSet;
-
 use axum::{
-    debug_handler,
-    extract::{Path, State},
-    Json,
+  debug_handler,
+  extract::{Path, State},
+  Json,
 };
-use axum::body::Body;
-use axum::http::{HeaderMap, HeaderValue, StatusCode};
-use axum::response::{IntoResponse, Response};
 use mosaic_utils::{ApiErrorResponse, AppError, AppState, GraphQLExt};
 
 use crate::{models::ResolvedProject, TAG};
@@ -28,56 +23,56 @@ use crate::{models::ResolvedProject, TAG};
 )]
 #[debug_handler]
 pub async fn handler(
-    Path((username, repository_name)): Path<(String, String)>,
-    State(state): State<AppState>,
+  Path((username, repository_name)): Path<(String, String)>,
+  State(state): State<AppState>,
 ) -> Result<Json<Vec<ResolvedProject>>, ApiErrorResponse> {
-    let resolved_config = mosaic_utils::resolve_config(&state, &username, &repository_name)
-        .await
-        .map_err(|err| {
-            tracing::error!("Error resolving config: {:?}", err);
-            ApiErrorResponse::from(err)
-        })?;
+  let resolved_config = mosaic_utils::resolve_config(&state, &username, &repository_name)
+    .await
+    .map_err(|err| {
+      tracing::error!("Error resolving config: {:?}", err);
+      ApiErrorResponse::from(err)
+    })?;
 
-    let _repository = state
-        .github
-        .get_graphql_repository(&username, &repository_name)
-        .await
-        .map_err(|err| {
-            tracing::error!("Error getting repository: {:?}", err);
-            ApiErrorResponse::from(AppError::from(err))
-        })?;
+  let _repository = state
+    .github
+    .get_graphql_repository(&username, &repository_name)
+    .await
+    .map_err(|err| {
+      tracing::error!("Error getting repository: {:?}", err);
+      ApiErrorResponse::from(AppError::from(err))
+    })?;
 
-    let mosaic_config = resolved_config.content;
+  let mosaic_config = resolved_config.content;
 
-    if mosaic_config.base_config.project.ignore {
-        return Err(ApiErrorResponse::from(AppError::IgnoredProject));
-    }
+  if mosaic_config.base_config.project.ignore {
+    return Err(ApiErrorResponse::from(AppError::IgnoredProject));
+  }
 
-    let mut resolved_projects: Vec<ResolvedProject> = Vec::new();
+  let mut resolved_projects: Vec<ResolvedProject> = Vec::new();
 
-    if let Some(_workspace_config) = &mosaic_config.workspace {
-        return Err(ApiErrorResponse::from(AppError::Unknown));
-    }
+  if let Some(_workspace_config) = &mosaic_config.workspace {
+    return Err(ApiErrorResponse::from(AppError::Unknown));
+  }
 
-    let project = ResolvedProject {
-        name: if let Some(name) = &mosaic_config.base_config.project.name {
-            name.clone()
-        } else {
-            repository_name.clone()
-        },
-        ignore: mosaic_config.base_config.project.ignore,
-        priority: mosaic_config.base_config.project.priority,
-        description: mosaic_config.base_config.project.description.clone(),
-        handle: mosaic_config.base_config.project.handle.clone(),
-        version: Some("0.0.1".to_string()),
-        stars: Some(10),
-    };
+  let project = ResolvedProject {
+    name: if let Some(name) = &mosaic_config.base_config.project.name {
+      name.clone()
+    } else {
+      repository_name.clone()
+    },
+    ignore: mosaic_config.base_config.project.ignore,
+    priority: mosaic_config.base_config.project.priority,
+    description: mosaic_config.base_config.project.description.clone(),
+    handle: mosaic_config.base_config.project.handle.clone(),
+    version: Some("0.0.1".to_string()),
+    stars: Some(10),
+  };
 
-    if (mosaic_config.base_config.project.version) {
-        // fetch latest github version
-    }
+  // if (mosaic_config.base_config.project.version) {
+  // fetch latest github version
+  // }
 
-    resolved_projects.push(project);
+  resolved_projects.push(project);
 
-    Ok(Json(resolved_projects))
+  Ok(Json(resolved_projects))
 }

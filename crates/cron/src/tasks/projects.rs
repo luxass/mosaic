@@ -25,19 +25,17 @@ pub async fn update_projects(data: &Data<AppState>) -> Result<(), AppError> {
   tracing::debug!("filtered repositories: {:?}", repositories);
 
   let mut resolved_configs = Vec::new();
-  for repository in repositories {
-    if let Some(repository) = repository {
-      let parts: Vec<&str> = repository.name_with_owner.split('/').collect();
-      let owner = parts.get(0).unwrap();
-      let name = parts.get(1).unwrap();
-      match resolve_config(data, owner, name).await {
-        Ok(resolved_config) => {
-          resolved_configs.push((repository, Some(resolved_config)));
-        }
-        Err(_) => {
-          tracing::debug!("no config found for {}", repository.name_with_owner);
-          resolved_configs.push((repository, None));
-        }
+  for repository in repositories.flatten() {
+    let parts: Vec<&str> = repository.name_with_owner.split('/').collect();
+    let owner = parts.first().unwrap();
+    let name = parts.get(1).unwrap();
+    match resolve_config(data, owner, name).await {
+      Ok(resolved_config) => {
+        resolved_configs.push((repository, Some(resolved_config)));
+      }
+      Err(_) => {
+        tracing::debug!("no config found for {}", repository.name_with_owner);
+        resolved_configs.push((repository, None));
       }
     }
   }
@@ -58,7 +56,7 @@ pub async fn update_projects(data: &Data<AppState>) -> Result<(), AppError> {
     repositories_with_config.len()
   );
 
-  let keep_ids = repositories_with_config
+  let _keep_ids = repositories_with_config
     .iter()
     .map(|(repo, _)| &repo.id)
     .collect::<Vec<_>>();
@@ -67,7 +65,7 @@ pub async fn update_projects(data: &Data<AppState>) -> Result<(), AppError> {
     .iter()
     .map(|(repo, _)| repo.id.to_string())
     .collect();
-  let placeholders: Vec<String> = (1..=keep_ids.len()).map(|i| format!("${}", i)).collect();
+  let _placeholders: Vec<String> = (1..=keep_ids.len()).map(|i| format!("${}", i)).collect();
 
   let joined_ids = keep_ids
     .iter()
@@ -108,8 +106,8 @@ pub async fn update_projects(data: &Data<AppState>) -> Result<(), AppError> {
     if let Some(_existing_repo) = existing_repo {
       let update_result = sqlx::query!("UPDATE mosaic_repositories SET name = $1, name_with_owner = $2, config = $3, last_updated = current_timestamp, description = $4, url = $5 WHERE github_id = $6",
         repo.name, repo.name_with_owner, serde_json::to_value(config)?, repo.description, repo.url, repo.id)
-        .execute(&data.db)
-        .await;
+                .execute(&data.db)
+                .await;
 
       if update_result.is_err() {
         tracing::error!(

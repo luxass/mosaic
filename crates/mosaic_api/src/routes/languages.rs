@@ -1,4 +1,5 @@
-use crate::TAG;
+use std::collections::HashMap;
+
 use axum::http::StatusCode;
 use axum::{
   debug_handler,
@@ -7,7 +8,8 @@ use axum::{
 };
 use github_languages::LANGUAGES;
 use mosaic_utils::{ApiErrorResponse, AppError, AppState};
-use std::collections::HashMap;
+
+use crate::TAG;
 
 #[utoipa::path(
   get,

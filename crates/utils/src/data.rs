@@ -1,5 +1,7 @@
 use std::env;
+
 use octocrab::Octocrab;
+
 use crate::AppError;
 
 #[derive(Clone, Debug)]
