@@ -39,7 +39,7 @@ pub enum AppError {
   GitHubError(GitHubErrorBody),
 
   #[error("Octocrab: {0}")]
-  Octocrab(#[from] octocrab::Error),
+  Octocrab(#[from] Box<octocrab::Error>),
 
   #[error("SQLx error: {0}")]
   SqlxError(#[from] sqlx::Error),
@@ -107,5 +107,11 @@ impl From<AppError> for ApiErrorResponse {
       timestamp: Utc::now(),
     });
     (status_code, payload)
+  }
+}
+
+impl From<octocrab::Error> for AppError {
+  fn from(error: octocrab::Error) -> Self {
+    AppError::Octocrab(Box::new(error))
   }
 }
