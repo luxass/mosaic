@@ -4,40 +4,35 @@ on:
   push:
     branches:
       - main
-
   pull_request:
-    branches:
-      - main
+    types:
+      - opened
+      - synchronize
+
+env:
+  CARGO_TERM_COLOR: always
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: lts/*
-          cache: pnpm
+      - uses: actions/checkout@v4.1.7
+      - run: cargo build --release
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - run: cargo test
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      - name: install
-        run: pnpm install
-
-      - name: lint
-        run: pnpm run lint
-
-  typecheck:
+  clippy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: lts/*
-          cache: pnpm
-
-      - name: install
-        run: pnpm install
-
-      - name: typecheck
-        run: pnpm run typecheck
+      - uses: actions/checkout@v4.1.7
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets --all-features -- -D warnings
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}

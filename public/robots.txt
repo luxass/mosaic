@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://projectrc.luxass.dev/sitemap-index.xml

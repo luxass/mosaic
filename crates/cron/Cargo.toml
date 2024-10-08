@@ -1,0 +1,30 @@
+[package]
+name = "mosaic_cron"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+readme.workspace = true
+license.workspace = true
+authors.workspace = true
+description.workspace = true
+documentation.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lib]
+name = "mosaic_cron"
+path = "src/lib.rs"
+
+[dependencies]
+mosaic_utils = { workspace = true }
+mosaic_repositories_api = { workspace = true } # Refactor this, so we are importing the models from a different package
+anyhow = { workspace = true }
+apalis = { workspace = true }
+apalis-cron = { workspace = true }
+chrono = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+reqwest = { workspace = true }
+sqlx = { workspace = true }
+octocrab = { workspace = true }

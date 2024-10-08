@@ -1,0 +1,34 @@
+query ProfileQuery {
+  viewer {
+    repositories(
+      first: 100
+      isFork: false
+      privacy: PUBLIC
+      ownerAffiliations: [OWNER]
+      orderBy: { field: STARGAZERS, direction: DESC }
+    ) {
+      totalCount
+      nodes {
+        id
+        name
+        isFork
+        isArchived
+        nameWithOwner
+        description
+        pushedAt
+        url
+        defaultBranchRef {
+          name
+        }
+        primaryLanguage {
+          name
+          color
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+}

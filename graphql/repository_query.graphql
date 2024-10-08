@@ -1,0 +1,18 @@
+query RepositoryQuery($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
+    name
+    isFork
+    isArchived
+    nameWithOwner
+    description
+    pushedAt
+    url
+    defaultBranchRef {
+      name
+    }
+    primaryLanguage {
+      name
+      color
+    }
+  }
+}
