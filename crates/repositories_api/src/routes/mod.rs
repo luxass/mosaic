@@ -16,13 +16,13 @@ pub const TAG: &str = "Repositories";
     MosaicRepository
   )),
   tags(
-    (name = TAG, description = "Repoitory API")
+    (name = TAG, description = "Repository API")
   )
 )]
-pub struct ProjectsApi;
+pub struct RepositoryApi;
 
 pub fn routes() -> OpenApiRouter<AppState> {
-  OpenApiRouter::with_openapi(ProjectsApi::openapi())
+  OpenApiRouter::with_openapi(RepositoryApi::openapi())
     .routes(routes!(all_repositories::handler))
     .routes(routes!(get_repository::handler))
     .routes(routes!(get_repository_config::handler))
