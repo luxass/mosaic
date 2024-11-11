@@ -37,7 +37,7 @@
   "devDependencies": {
     "@types/hast": "^3.0.4",
     "@types/mdast": "^4.0.4",
-    "@types/node": "^20.14.9",
+    "@types/node": "^22.0.0",
     "eslint": "^9.9.0",
     "eslint-plugin-format": "^0.1.2",
     "nitro": "npm:nitro-nightly@3x",
