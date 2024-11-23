@@ -1,55 +1,51 @@
 use std::mem;
 
 use anyhow::Result;
-use clap::{
-  builder::NonEmptyStringValueParser, ArgAction, ArgGroup, CommandFactory, Parser, Subcommand,
-  ValueEnum,
-};
+use clap::{arg, builder::NonEmptyStringValueParser, ArgAction, ArgGroup, ArgMatches, Command, CommandFactory, Parser, Subcommand, ValueEnum};
 
-#[derive(Parser, Clone, Default, Debug, PartialEq)]
-#[clap(author, about = "An API for your projects", long_about = None)]
-#[clap(disable_help_subcommand = true)]
-#[clap(arg_required_else_help = true)]
-#[command(name = "mosaic")]
-pub struct Args {
-  #[clap(subcommand)]
-  pub command: Option<Command>,
-}
 
-#[derive(Subcommand, Clone, Debug, PartialEq)]
-pub enum Command {
-  Run,
-  Validate,
-  Query,
+fn cli() -> Command {
+    Command::new("mosaic")
+        .about("An API for your projects")
+        .subcommand_required(true)
+        .arg_required_else_help(true)
+        .subcommand(
+            Command::new("run")
+                .about("Run the mosaic server")
+        )
+        .subcommand(
+            Command::new("validate")
+                .about("Validate a Mosaic Project Config")
+                .arg(arg!(project_name: [PROJECT_NAME]))
+        )
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-  let mut cli_args = Args::parse();
-  let mut command = if let Some(command) = mem::take(&mut cli_args.command) {
-    command
-  } else {
-    Command::Run
-  };
+    let matches = cli().get_matches();
 
-  cli_args.command = Some(command);
+    match matches.subcommand() {
+        Some(("run", sub_matches)) => {
+            todo!()
+        },
+        Some(("validate", sub_matches)) => {
 
-  // TODO: set cwd
+            let mut project_name = sub_matches.get_one::<String>("project_name").map(|s| s.as_str());
 
-  let cli_result = match cli_args.command.as_ref().unwrap() {
-    Command::Run => {
-      println!("Running Mosaic...");
-      Ok(())
-    },
-    Command::Validate => {
-      todo!()
-    },
-    Command::Query => {
-      todo!()
-    },
-  };
+            if project_name.is_none() {
+                let is_mosaic_project = mosaic_utils::projects::is_mosaic_project().await;
 
+                if !is_mosaic_project {
+                    unreachable!("Could not find mosaic project.")
+                }
 
+                project_name = Some("asdas");
+            }
 
-  cli_result
+            println!("Project Name: {}", project_name.unwrap());
+
+            todo!("asdj")
+        },
+        _ => unreachable!()
+    }
 }

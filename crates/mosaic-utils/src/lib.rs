@@ -5,6 +5,8 @@ mod graceful_shutdown;
 mod json_schema;
 mod mosaic_config;
 mod version;
+mod config;
+pub mod projects;
 
 pub use data::{AppEnv, AppState};
 pub use error::{ApiError, ApiErrorResponse, AppError};
