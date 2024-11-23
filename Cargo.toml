@@ -11,20 +11,6 @@ repository = "https://github.com/luxass/mosaic"
 license = "MIT"
 publish = false
 
-
-[package]
-name = "mosaic"
-version.workspace = true
-edition.workspace = true
-publish.workspace = true
-readme.workspace = true
-license.workspace = true
-authors.workspace = true
-description.workspace = true
-documentation.workspace = true
-homepage.workspace = true
-repository.workspace = true
-
 [profile.dev.package."*"]
 opt-level = 3
 
@@ -35,31 +21,25 @@ opt-level = "z"
 panic = "abort"
 strip = "symbols"
 
-[features]
-default = ["mosaic_tracing/console", "mosaic_tracing/pretty"]
-snmalloc = ["dep:snmalloc-rs"]
-# mosaic_tracing
-tracing_conosle = ["mosaic_tracing/console"]
-tracing_json = ["mosaic_tracing/json"]
-tracing_pretty = ["mosaic_tracing/pretty"]
-
 [workspace]
+resolver = "2"
+
 members = [
-	".",
 	"crates/server",
 	"crates/tracing",
-	"crates/utils",
-	"crates/cron",
+	"crates/mosaic-utils",
+	"crates/mosaic-cron",
 	"crates/repositories_api",
 	"crates/mosaic_api",
 	"crates/mosaic_package",
+	"crates/mosaic",
 ]
 
 [workspace.dependencies]
 mosaic_tracing = { path = "./crates/tracing" }
-mosaic_utils = { path = "./crates/utils" }
+mosaic_utils = { path = "./crates/mosaic-utils" }
 mosaic_server = { path = "./crates/server" }
-mosaic_cron = { path = "./crates/cron" }
+mosaic_cron = { path = "./crates/mosaic-cron" }
 mosaic_repositories_api = { path = "./crates/repositories_api" }
 mosaic_api = { path = "./crates/mosaic_api" }
 mosaic_package = { path = "./crates/mosaic_package" }
@@ -72,6 +52,8 @@ reqwest = { version = "0.12", default-features = false, features = [
 	"json",
 	"rustls-tls",
 ] }
+clap = "4.5.16"
+clap_complete = "4.5.24"
 # TODO: Can't update octocrab atm, because depends on aws-lc-sys because of rustls feature
 octocrab = { version = "0.40.0" }
 async-trait = "0.1"
@@ -102,15 +84,16 @@ uuid = { version = "1.8", features = [
 ] }
 mockall = "0.13.0"
 
-[dependencies]
-mosaic_tracing = { workspace = true }
-mosaic_utils = { workspace = true }
-mosaic_server = { workspace = true }
-human-panic = "2"
-dotenvy = "0.15"
-tokio = { workspace = true }
-tracing = { workspace = true }
-snmalloc-rs = { version = "0.3", default-features = false, features = [
-	"build_cc",
-], optional = true }
-sqlx = { workspace = true }
+
+# [dependencies]
+# mosaic_tracing = { workspace = true }
+# mosaic_utils = { workspace = true }
+# mosaic_server = { workspace = true }
+# human-panic = "2"
+# dotenvy = "0.15"
+# tokio = { workspace = true }
+# tracing = { workspace = true }
+# snmalloc-rs = { version = "0.3", default-features = false, features = [
+# 	"build_cc",
+# ], optional = true }
+# sqlx = { workspace = true }
