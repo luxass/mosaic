@@ -1,6 +1,7 @@
 # mosaic
 
-A site that powers my projects page on [luxass.dev](https://luxass.dev).
+> [IMPORTANT]
+> Not used anymore, therefor archived.
 
 ## 📄 License
 
